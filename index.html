@@ -1,10 +1,116 @@
 <!doctype html>
-<html>
-  <head>
-    <title>axxtren</title>
-  </head>
-  <body>
-    <h1>hi, i am axxtren</h1>
-    <p>test btw</p>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>axxtren</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background: #0b0f17;
+      color: #e6e6e6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 700px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .tag {
+      color: #7c7c7c;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 15px 0;
+    }
+
+    a {
+      color: #7dd3fc;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #1f2937;
+      border: 1px solid #2b3648;
+      color: #e6e6e6;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      background: #273449;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>axxtren</h1>
+    <div class="tag">just a simple corner of the internet</div>
+
+    <div class="card">
+      <p>yo, i’m axxtren. i build stuff, break stuff, and sometimes fix it.</p>
+      <p>this site is just a hub for my links and whatever else i decide to add later.</p>
+    </div>
+
+    <div class="card">
+      <p><strong>socials</strong></p>
+      <div class="links">
+        <a class="btn" href="https://github.com/" target="_blank">github</a>
+        <a class="btn" href="https://discord.com/" target="_blank">discord</a>
+        <a class="btn" href="https://instagram.com/" target="_blank">instagram</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <p><strong>associates</strong></p>
+      <p>add your friends / collaborators here later</p>
+    </div>
+
+    <div class="footer">
+      hosted on github pages • axxtren.xyz
+    </div>
+
+  </div>
+</body>
 </html>
