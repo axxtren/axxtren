@@ -114,12 +114,30 @@ body::after {
   white-space: nowrap;
 }
 
+.terminal-state.playing {
+  color: rgba(136,255,174,0.82);
+  animation: statePulse 1.45s ease-in-out infinite;
+}
+
+.terminal-state.paused {
+  color: rgba(255,255,255,0.52);
+  animation: none;
+}
+
 .visualizer {
   height: 134px;
   display: flex;
   align-items: end;
   gap: 6px;
   padding: 16px 6px 4px;
+  filter: drop-shadow(0 0 16px rgba(255,255,255,0.08));
+  transition: filter 0.2s ease;
+}
+
+.visualizer.playing {
+  filter:
+    drop-shadow(0 0 12px rgba(255,255,255,0.16))
+    drop-shadow(0 0 26px rgba(255,255,255,0.08));
 }
 
 .bar {
@@ -170,6 +188,19 @@ body::after {
   }
 }
 
+@keyframes statePulse {
+  0%,
+  100% {
+    opacity: 0.62;
+    text-shadow: 0 0 0 rgba(136,255,174,0);
+  }
+
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 12px rgba(136,255,174,0.32);
+  }
+}
+
 .page {
   width: min(500px, calc(100vw - 32px));
   display: grid;
@@ -205,37 +236,91 @@ body::after {
 }
 
 .name {
+  position: relative;
   font-size: clamp(36px, 9vw, 52px);
   line-height: 0.92;
   font-weight: 800;
   letter-spacing: 0;
   text-shadow: 0 10px 36px rgba(0,0,0,0.46);
+  transition: transform 0.22s ease, text-shadow 0.22s ease;
+}
+
+.name::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: -8px;
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+  opacity: 0;
+  transform: scaleX(0.35);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.name:hover {
+  transform: translateY(-2px);
+  text-shadow:
+    0 1px 1px rgba(255,255,255,0.24),
+    0 14px 42px rgba(0,0,0,0.5),
+    0 0 24px rgba(255,255,255,0.12);
+}
+
+.name:hover::after {
+  opacity: 1;
+  transform: scaleX(1);
 }
 
 .lock-time {
   position: relative;
-  display: inline-block;
-  margin-top: 13px;
-  padding: 7px 18px 9px;
-  border: 1px solid rgba(255,255,255,0.13);
-  border-radius: 999px;
-  background:
-    linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.035)),
-    rgba(8,8,12,0.18);
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.24),
-    0 12px 30px rgba(0,0,0,0.22);
-  backdrop-filter: blur(18px) saturate(1.4);
-  -webkit-backdrop-filter: blur(18px) saturate(1.4);
-  font-size: clamp(30px, 8vw, 44px);
+  display: block;
+  margin-top: 12px;
+  font-size: clamp(42px, 11vw, 66px);
   line-height: 1;
-  font-weight: 300;
-  color: rgba(255,255,255,0.78);
+  font-weight: 240;
+  letter-spacing: 0;
+  color: transparent;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.62) 42%, rgba(255,255,255,0.22)),
+    linear-gradient(110deg, transparent 8%, rgba(255,255,255,0.72) 34%, transparent 58%);
+  background-clip: text;
+  -webkit-background-clip: text;
   font-variant-numeric: tabular-nums;
   text-shadow:
-    0 1px 1px rgba(255,255,255,0.25),
-    0 10px 30px rgba(0,0,0,0.36);
-  -webkit-text-stroke: 0.45px rgba(255,255,255,0.18);
+    0 1px 0 rgba(255,255,255,0.28),
+    0 8px 18px rgba(255,255,255,0.08),
+    0 18px 38px rgba(0,0,0,0.42);
+  -webkit-text-stroke: 0.65px rgba(255,255,255,0.22);
+}
+
+.lock-time::before {
+  content: attr(data-time);
+  position: absolute;
+  inset: 0;
+  color: rgba(255,255,255,0.16);
+  filter: blur(7px);
+  transform: translateY(6px) scale(1.02);
+  z-index: -1;
+}
+
+.lock-time::after {
+  content: attr(data-time);
+  position: absolute;
+  inset: 0;
+  color: rgba(255,255,255,0.18);
+  clip-path: inset(0 0 56% 0);
+  transform: translateY(-1px);
+  pointer-events: none;
+}
+
+.lock-date {
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 700;
+  color: rgba(255,255,255,0.46);
+  text-shadow: 0 8px 22px rgba(0,0,0,0.34);
 }
 
 .socials {
@@ -617,7 +702,7 @@ input[type="range"]::-moz-range-thumb {
     </div>
     <div class="terminal-line">
       <span class="terminal-key">state</span>
-      <span class="terminal-value" id="terminalState">paused</span>
+      <span class="terminal-value terminal-state paused" id="terminalState">paused</span>
     </div>
     <div class="terminal-line">
       <span class="terminal-key">volume</span>
@@ -655,7 +740,8 @@ input[type="range"]::-moz-range-thumb {
 <main class="page">
   <section class="identity" aria-label="Profile">
     <h1 class="name">axxtren</h1>
-    <div class="lock-time" id="lockTime">00:00</div>
+    <div class="lock-time" id="lockTime" data-time="00:00">00:00</div>
+    <div class="lock-date" id="lockDate">Thursday, May 7</div>
   </section>
 
   <nav class="socials" aria-label="Social links">
@@ -729,6 +815,8 @@ const playIcon = document.getElementById("playIcon");
 const terminalVolume = document.getElementById("terminalVolume");
 const terminalState = document.getElementById("terminalState");
 const lockTime = document.getElementById("lockTime");
+const lockDate = document.getElementById("lockDate");
+const visualizer = document.getElementById("visualizer");
 const visualizerBars = document.querySelectorAll(".bar");
 
 let isSeeking = false;
@@ -751,6 +839,9 @@ function formatTime(seconds) {
 function setPlayIcon(isPlaying) {
   playBtn.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
   terminalState.textContent = isPlaying ? "playing" : "paused";
+  terminalState.classList.toggle("playing", isPlaying);
+  terminalState.classList.toggle("paused", !isPlaying);
+  visualizer.classList.toggle("playing", isPlaying);
   playIcon.innerHTML = isPlaying
     ? '<path d="M7 5h4v14H7V5Zm6 0h4v14h-4V5Z"/>'
     : '<path d="M8 5v14l11-7z"/>';
@@ -760,7 +851,14 @@ function updateLockTime() {
   const now = new Date();
   const hours = now.getHours().toString().padStart(2, "0");
   const minutes = now.getMinutes().toString().padStart(2, "0");
-  lockTime.textContent = `${hours}:${minutes}`;
+  const timeText = `${hours}:${minutes}`;
+  lockTime.textContent = timeText;
+  lockTime.dataset.time = timeText;
+  lockDate.textContent = now.toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric"
+  });
 }
 
 function updateVolumeLabel() {
