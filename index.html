@@ -58,6 +58,152 @@ body::after {
   z-index: -2;
 }
 
+.playlist-panel {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  bottom: 18px;
+  width: min(310px, calc(100vw - 36px));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 28px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.13), rgba(255,255,255,0.035) 44%, rgba(255,255,255,0.07)),
+    rgba(8,8,12,0.25);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.34),
+    inset 0 -22px 36px rgba(255,255,255,0.026),
+    0 26px 70px rgba(0,0,0,0.38);
+  backdrop-filter: blur(26px) saturate(1.42);
+  -webkit-backdrop-filter: blur(26px) saturate(1.42);
+  z-index: 3;
+}
+
+.playlist-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 5px 0;
+}
+
+.playlist-title {
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 800;
+  color: rgba(255,255,255,0.92);
+}
+
+.playlist-count {
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+}
+
+.playlist-list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.playlist-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.playlist-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255,255,255,0.2);
+}
+
+.playlist-item {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 10px;
+  align-items: center;
+  appearance: none;
+  border: 0;
+  border-radius: 16px;
+  padding: 9px 10px;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+
+.playlist-item:hover,
+.playlist-item.active {
+  background: rgba(255,255,255,0.105);
+}
+
+.playlist-item:hover {
+  transform: translateX(2px);
+}
+
+.playlist-number {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.62);
+}
+
+.playlist-item.active .playlist-number {
+  background: rgba(255,255,255,0.9);
+  color: rgba(0,0,0,0.82);
+}
+
+.playlist-song {
+  display: block;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.15;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playlist-artist {
+  display: block;
+  overflow: hidden;
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.1;
+  font-weight: 650;
+  color: rgba(255,255,255,0.5);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spotify-frame-wrap {
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 18px;
+  background: rgba(0,0,0,0.18);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.16),
+    0 12px 30px rgba(0,0,0,0.24);
+}
+
+.spotify-frame {
+  width: 100%;
+  height: 152px;
+  display: block;
+  border: 0;
+}
+
 .page {
   width: min(500px, calc(100vw - 32px));
   display: grid;
@@ -421,6 +567,40 @@ input[type="range"]::-moz-range-thumb {
   color: rgba(255,255,255,0.74);
 }
 
+@media (max-width: 1120px) {
+  .playlist-panel {
+    top: 14px;
+    bottom: auto;
+    width: 280px;
+    max-height: calc(100vh - 176px);
+  }
+}
+
+@media (max-width: 840px) {
+  .playlist-panel {
+    left: 50%;
+    top: auto;
+    bottom: 180px;
+    width: min(500px, calc(100vw - 24px));
+    max-height: 220px;
+    transform: translateX(-50%);
+    border-radius: 22px;
+  }
+
+  .playlist-list {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(150px, 1fr);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 0 3px;
+  }
+
+  .spotify-frame-wrap {
+    display: none;
+  }
+}
+
 @media (max-width: 520px) {
   .page {
     transform: translateY(-56px);
@@ -441,6 +621,10 @@ input[type="range"]::-moz-range-thumb {
     border-radius: 22px;
   }
 
+  .playlist-panel {
+    bottom: 170px;
+  }
+
   .cover {
     width: 50px;
     height: 50px;
@@ -451,6 +635,110 @@ input[type="range"]::-moz-range-thumb {
 </head>
 
 <body>
+<aside class="playlist-panel" aria-label="Spotify playlist">
+  <div class="playlist-head">
+    <div class="playlist-title">spotify</div>
+    <div class="playlist-count">12 tracks</div>
+  </div>
+
+  <div class="playlist-list" id="playlistList">
+    <button class="playlist-item active" type="button" data-track="6P8rBeOxn0ervew8cr0jcD">
+      <span class="playlist-number">01</span>
+      <span>
+        <span class="playlist-song">Randomly</span>
+        <span class="playlist-artist">LUCKI</span>
+      </span>
+    </button>
+    <button class="playlist-item" type="button" data-track="4IO2X2YoXoUMv0M2rwomLC">
+      <span class="playlist-number">02</span>
+      <span>
+        <span class="playlist-song">Long Time - Intro</span>
+        <span class="playlist-artist">Playboi Carti</span>
+      </span>
+    </button>
+    <button class="playlist-item" type="button" data-track="42tD9J0KCPFSc1d2hFTvAf">
+      <span class="playlist-number">03</span>
+      <span>
+        <span class="playlist-song">NOSTYLIST</span>
+        <span class="playlist-artist">Destroy Lonely</span>
+      </span>
+    </button>
+    <button class="playlist-item" type="button" data-track="3ALLj0DA6C4oqfNR6pnWpN">
+      <span class="playlist-number">04</span>
+      <span>
+        <span class="playlist-song">new new</span>
+        <span class="playlist-artist">Destroy Lonely</span>
+      </span>
+    </button>
+    <button class="playlist-item" type="button" data-track="26QJuQfM8PVAWkIm1JRyqq">
+      <span class="playlist-number">05</span>
+      <span>
+        <span class="playlist-song">ss</span>
+        <span class="playlist-artist">Ken Carson</span>
+      </span>
+    </button>
+    <button class="playlist-item" type="button" data-track="2gSPHSdf0vrk2Psxmn8sUn">
+      <span class="playlist-number">06</span>
+      <span>
+        <span class="playlist-song">i need u</span>
+        <span class="playlist-artist">Ken Carson</span>
+      </span>
+    </button>
+    <button class="playlist-item" type="button" data-track="3OUfsApmvr7mwIm0rSbqbu">
+      <span class="playlist-number">07</span>
+      <span>
+        <span class="playlist-song">leather jacket</span>
+        <span class="playlist-artist">Ken Carson</span>
+      </span>
+    </button>
+    <button class="playlist-item" type="button" data-track="56BtPjjWiRc0ch7DH8DNu9">
+      <span class="playlist-number">08</span>
+      <span>
+        <span class="playlist-song">Trap Jump</span>
+        <span class="playlist-artist">Ken Carson</span>
+      </span>
+    </button>
+    <button class="playlist-item" type="button" data-track="3FMKkmAXsCrJM9ZDIbQejN">
+      <span class="playlist-number">09</span>
+      <span>
+        <span class="playlist-song">THRILL</span>
+        <span class="playlist-artist">Destroy Lonely, Ken Carson</span>
+      </span>
+    </button>
+    <button class="playlist-item" type="button" data-track="42VsgItocQwOQC3XWZ8JNA">
+      <span class="playlist-number">10</span>
+      <span>
+        <span class="playlist-song">FE!N</span>
+        <span class="playlist-artist">Travis Scott, Playboi Carti</span>
+      </span>
+    </button>
+    <button class="playlist-item" type="button" data-track="1Es7AUAhQvapIcoh3qMKDL">
+      <span class="playlist-number">11</span>
+      <span>
+        <span class="playlist-song">Timeless</span>
+        <span class="playlist-artist">The Weeknd, Playboi Carti</span>
+      </span>
+    </button>
+    <button class="playlist-item" type="button" data-track="2EQacdp8Z34aEKea48XG7H">
+      <span class="playlist-number">12</span>
+      <span>
+        <span class="playlist-song">What You Know</span>
+        <span class="playlist-artist">Ken Carson, Lancey Foux</span>
+      </span>
+    </button>
+  </div>
+
+  <div class="spotify-frame-wrap">
+    <iframe
+      class="spotify-frame"
+      id="spotifyFrame"
+      src="https://open.spotify.com/embed/track/6P8rBeOxn0ervew8cr0jcD?utm_source=generator&theme=0"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy">
+    </iframe>
+  </div>
+</aside>
+
 <main class="page">
   <section class="identity" aria-label="Profile">
     <h1 class="name">axxtren</h1>
@@ -525,6 +813,8 @@ const volumeValue = document.getElementById("volumeValue");
 const time = document.getElementById("time");
 const playBtn = document.getElementById("playBtn");
 const playIcon = document.getElementById("playIcon");
+const spotifyFrame = document.getElementById("spotifyFrame");
+const playlistItems = document.querySelectorAll(".playlist-item");
 
 let isSeeking = false;
 let fadeFrame = null;
@@ -670,6 +960,17 @@ function tryAutoplay() {
 
 window.addEventListener("DOMContentLoaded", tryAutoplay);
 window.addEventListener("pointerdown", tryAutoplay, { once: true });
+
+playlistItems.forEach((item) => {
+  item.addEventListener("click", () => {
+    const trackId = item.dataset.track;
+    if (!trackId) return;
+
+    playlistItems.forEach((playlistItem) => playlistItem.classList.remove("active"));
+    item.classList.add("active");
+    spotifyFrame.src = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0`;
+  });
+});
 </script>
 </body>
 </html>
