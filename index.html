@@ -88,6 +88,27 @@ body::after {
   gap: 8px;
 }
 
+.terminal-main {
+  display: grid;
+  gap: 8px;
+  opacity: 1;
+  transition: opacity 0.22s ease;
+}
+
+.terminal.booting .terminal-main {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.boot-log {
+  display: none;
+  gap: 8px;
+}
+
+.terminal.booting .boot-log {
+  display: grid;
+}
+
 .terminal-line {
   display: flex;
   align-items: center;
@@ -97,6 +118,25 @@ body::after {
   line-height: 1.1;
   font-weight: 700;
   color: rgba(255,255,255,0.52);
+}
+
+.boot-line {
+  min-height: 14px;
+  font-size: 12px;
+  line-height: 1.1;
+  font-weight: 700;
+  color: rgba(255,255,255,0.52);
+}
+
+.boot-line.active::after {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 10px;
+  margin-left: 4px;
+  border-radius: 1px;
+  background: rgba(255,255,255,0.48);
+  animation: cursorBlink 0.75s steps(2, jump-none) infinite;
 }
 
 .terminal-line:first-child {
@@ -154,6 +194,112 @@ body::after {
   opacity: 0.75;
 }
 
+.command-wrap {
+  position: relative;
+}
+
+.command-line {
+  width: 100%;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 10px;
+  padding: 0 12px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025)),
+    rgba(0,0,0,0.12);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.16),
+    0 10px 24px rgba(0,0,0,0.18);
+  color: rgba(255,255,255,0.72);
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 750;
+  text-align: left;
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+}
+
+.command-prefix {
+  color: rgba(255,255,255,0.36);
+}
+
+.command-caret {
+  margin-left: auto;
+  color: rgba(255,255,255,0.38);
+  transition: transform 0.18s ease;
+}
+
+.command-wrap.open .command-caret {
+  transform: rotate(180deg);
+}
+
+.command-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 44px;
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 14px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.095), rgba(255,255,255,0.025)),
+    rgba(8,8,12,0.48);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.18),
+    0 18px 42px rgba(0,0,0,0.32);
+  backdrop-filter: blur(22px) saturate(1.35);
+  -webkit-backdrop-filter: blur(22px) saturate(1.35);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) scale(0.97);
+  transform-origin: bottom;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 8;
+}
+
+.command-wrap.open .command-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.command-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  appearance: none;
+  border: 0;
+  border-radius: 9px;
+  padding: 9px 10px;
+  background: transparent;
+  color: rgba(255,255,255,0.76);
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 750;
+  text-align: left;
+  transition: background 0.14s ease, color 0.14s ease, transform 0.14s ease;
+}
+
+.command-item span:last-child {
+  color: rgba(255,255,255,0.34);
+  font-size: 10px;
+}
+
+.command-item:hover {
+  background: rgba(255,255,255,0.09);
+  color: white;
+  transform: translateX(2px);
+}
+
 .status-line {
   position: fixed;
   left: 22px;
@@ -166,6 +312,35 @@ body::after {
   font-weight: 750;
   color: rgba(255,255,255,0.38);
   z-index: 4;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 112px;
+  padding: 9px 13px;
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 999px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.025)),
+    rgba(8,8,12,0.5);
+  box-shadow: 0 16px 38px rgba(0,0,0,0.28);
+  color: rgba(255,255,255,0.72);
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(8px) scale(0.96);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  z-index: 20;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
 }
 
 .status-dot {
@@ -212,6 +387,12 @@ body::after {
   50% {
     transform: scale(1.15);
     box-shadow: 0 0 16px rgba(56,242,109,0.75);
+  }
+}
+
+@keyframes cursorBlink {
+  50% {
+    opacity: 0;
   }
 }
 
@@ -705,26 +886,32 @@ input[type="range"]::-moz-range-thumb {
 
 <body>
 <aside class="side-panel" aria-label="Site details">
-  <div class="terminal" aria-label="Mini terminal">
-    <div class="terminal-line">
-      <span>axxtren.xyz</span>
-      <span class="terminal-value">online</span>
+  <div class="terminal booting" id="terminal" aria-label="Mini terminal">
+    <div class="boot-log" id="bootLog" aria-hidden="true">
+      <div class="boot-line active" id="bootLine">loading profile...</div>
     </div>
-    <div class="terminal-line">
-      <span class="terminal-key">track</span>
-      <span class="terminal-value">Randomly - LUCKI</span>
-    </div>
-    <div class="terminal-line">
-      <span class="terminal-key">state</span>
-      <span class="terminal-value terminal-state paused" id="terminalState">paused</span>
-    </div>
-    <div class="terminal-line">
-      <span class="terminal-key">volume</span>
-      <span class="terminal-value" id="terminalVolume">15%</span>
-    </div>
-    <div class="terminal-line">
-      <span class="terminal-key">session</span>
-      <span class="terminal-value">synced</span>
+
+    <div class="terminal-main">
+      <div class="terminal-line">
+        <span>axxtren.xyz</span>
+        <span class="terminal-value">online</span>
+      </div>
+      <div class="terminal-line">
+        <span class="terminal-key">track</span>
+        <span class="terminal-value">Randomly - LUCKI</span>
+      </div>
+      <div class="terminal-line">
+        <span class="terminal-key">state</span>
+        <span class="terminal-value terminal-state paused" id="terminalState">paused</span>
+      </div>
+      <div class="terminal-line">
+        <span class="terminal-key">volume</span>
+        <span class="terminal-value" id="terminalVolume">15%</span>
+      </div>
+      <div class="terminal-line">
+        <span class="terminal-key">session</span>
+        <span class="terminal-value">synced</span>
+      </div>
     </div>
   </div>
 
@@ -744,6 +931,36 @@ input[type="range"]::-moz-range-thumb {
     <span class="bar"></span>
     <span class="bar"></span>
   </div>
+
+  <div class="command-wrap" id="commandWrap">
+    <button class="command-line" id="commandLine" type="button" aria-expanded="false" aria-controls="commandMenu">
+      <span class="command-prefix">/</span>
+      <span>commands</span>
+      <span class="command-caret">^</span>
+    </button>
+    <div class="command-menu" id="commandMenu">
+      <button class="command-item" type="button" data-command="discord">
+        <span>open discord</span>
+        <span>link</span>
+      </button>
+      <button class="command-item" type="button" data-command="telegram">
+        <span>open telegram</span>
+        <span>link</span>
+      </button>
+      <button class="command-item" type="button" data-command="music">
+        <span>toggle music</span>
+        <span>space</span>
+      </button>
+      <button class="command-item" type="button" data-command="restart">
+        <span>restart track</span>
+        <span>audio</span>
+      </button>
+      <button class="command-item" type="button" data-command="copy">
+        <span>copy site</span>
+        <span>url</span>
+      </button>
+    </div>
+  </div>
 </aside>
 
 <div class="status-line" aria-label="Website status">
@@ -759,19 +976,21 @@ input[type="range"]::-moz-range-thumb {
   </section>
 
   <nav class="socials" aria-label="Social links">
-    <a class="social-link" href="https://discord.com/users/1462056813691273295" target="_blank" rel="noopener" aria-label="Discord" title="Discord">
+    <a class="social-link" href="https://discord.com/users/1462056813691273295" target="_blank" rel="noopener" aria-label="Discord" title="Discord" data-copy="https://discord.com/users/1462056813691273295" data-copy-label="discord">
       <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M20.32 4.37A19.8 19.8 0 0 0 15.36 2.8a.07.07 0 0 0-.08.04c-.21.38-.45.88-.62 1.27a18.27 18.27 0 0 0-5.32 0 12.6 12.6 0 0 0-.63-1.27.08.08 0 0 0-.08-.04c-1.73.3-3.4.83-4.96 1.57a.07.07 0 0 0-.03.03C.54 9.05-.32 13.58.1 18.05c0 .02.02.05.04.06a19.9 19.9 0 0 0 6.08 3.07.08.08 0 0 0 .08-.03c.47-.64.88-1.31 1.24-2.02a.08.08 0 0 0-.04-.1 13.1 13.1 0 0 1-1.9-.9.08.08 0 0 1 0-.13l.38-.3a.08.08 0 0 1 .08-.01c3.96 1.8 8.24 1.8 12.15 0a.08.08 0 0 1 .09.01l.38.3a.08.08 0 0 1 0 .13c-.6.35-1.23.65-1.9.9a.08.08 0 0 0-.04.1c.36.7.77 1.38 1.24 2.02a.08.08 0 0 0 .08.03 19.85 19.85 0 0 0 6.08-3.07.08.08 0 0 0 .04-.06c.5-5.18-.84-9.67-3.92-13.65a.06.06 0 0 0-.03-.03ZM8.02 15.33c-1.2 0-2.18-1.1-2.18-2.45s.96-2.45 2.18-2.45c1.23 0 2.2 1.1 2.18 2.45 0 1.35-.96 2.45-2.18 2.45Zm7.98 0c-1.2 0-2.18-1.1-2.18-2.45s.96-2.45 2.18-2.45c1.23 0 2.2 1.1 2.18 2.45 0 1.35-.95 2.45-2.18 2.45Z"/>
       </svg>
     </a>
 
-    <a class="social-link" href="https://t.me/axxxtren" target="_blank" rel="noopener" aria-label="Telegram" title="Telegram">
+    <a class="social-link" href="https://t.me/axxxtren" target="_blank" rel="noopener" aria-label="Telegram" title="Telegram" data-copy="https://t.me/axxxtren" data-copy-label="telegram">
       <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M22.5 3.16c.3-.12.62.13.55.45l-3.03 17.96c-.08.45-.58.69-.96.44l-5.5-3.83-2.75 2.65c-.3.3-.81.16-.92-.25l-1.32-4.72-5.36-1.77c-.47-.16-.5-.81-.05-1.02L22.5 3.16Zm-4.24 4.43-8.13 7.23.86 3.07.48-2.35a.8.8 0 0 1 .27-.45l7.04-6.74c.43-.41.04-1.05-.52-.76Z"/>
       </svg>
     </a>
   </nav>
 </main>
+
+<div class="toast" id="toast">copied</div>
 
 <aside class="player" aria-label="Music player">
   <div class="track-head">
@@ -826,12 +1045,19 @@ const volumeValue = document.getElementById("volumeValue");
 const time = document.getElementById("time");
 const playBtn = document.getElementById("playBtn");
 const playIcon = document.getElementById("playIcon");
+const terminal = document.getElementById("terminal");
+const bootLine = document.getElementById("bootLine");
 const terminalVolume = document.getElementById("terminalVolume");
 const terminalState = document.getElementById("terminalState");
 const lockTime = document.getElementById("lockTime");
 const lockDate = document.getElementById("lockDate");
 const visualizer = document.getElementById("visualizer");
 const visualizerBars = document.querySelectorAll(".bar");
+const commandWrap = document.getElementById("commandWrap");
+const commandLine = document.getElementById("commandLine");
+const commandItems = document.querySelectorAll(".command-item");
+const toast = document.getElementById("toast");
+const socialLinks = document.querySelectorAll(".social-link[data-copy]");
 
 let isSeeking = false;
 let fadeFrame = null;
@@ -841,6 +1067,7 @@ let analyser = null;
 let source = null;
 let visualizerData = null;
 let idleVisualFrame = 0;
+let toastTimer = null;
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds)) return "0:00";
@@ -879,6 +1106,28 @@ function updateVolumeLabel() {
   const label = `${Math.round(Number(volume.value) * 100)}%`;
   volumeValue.textContent = label;
   terminalVolume.textContent = label;
+}
+
+function showToast(message) {
+  clearTimeout(toastTimer);
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  toastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 1300);
+}
+
+function copyText(value, label = "link") {
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard
+      .writeText(value)
+      .then(() => showToast(`${label} copied`))
+      .catch(() => showToast("copy failed"));
+    return;
+  }
+
+  showToast("copy unavailable");
 }
 
 function targetVolume() {
@@ -1005,6 +1254,74 @@ function tryAutoplay() {
 
 window.addEventListener("DOMContentLoaded", tryAutoplay);
 window.addEventListener("pointerdown", tryAutoplay, { once: true });
+
+function runBootSequence() {
+  const bootSteps = [
+    "loading profile...",
+    "syncing audio...",
+    "starting visualizer...",
+    "status: up"
+  ];
+
+  bootSteps.forEach((step, index) => {
+    setTimeout(() => {
+      bootLine.textContent = step;
+    }, index * 420);
+  });
+
+  setTimeout(() => {
+    terminal.classList.remove("booting");
+  }, bootSteps.length * 420 + 180);
+}
+
+runBootSequence();
+
+commandLine.addEventListener("click", () => {
+  const isOpen = commandWrap.classList.toggle("open");
+  commandLine.setAttribute("aria-expanded", isOpen ? "true" : "false");
+});
+
+document.addEventListener("click", (event) => {
+  if (!commandWrap.contains(event.target)) {
+    commandWrap.classList.remove("open");
+    commandLine.setAttribute("aria-expanded", "false");
+  }
+});
+
+commandItems.forEach((item) => {
+  item.addEventListener("click", () => {
+    const command = item.dataset.command;
+    commandWrap.classList.remove("open");
+    commandLine.setAttribute("aria-expanded", "false");
+
+    if (command === "discord") {
+      window.open("https://discord.com/users/1462056813691273295", "_blank", "noopener");
+    }
+
+    if (command === "telegram") {
+      window.open("https://t.me/axxxtren", "_blank", "noopener");
+    }
+
+    if (command === "music") {
+      togglePlay();
+    }
+
+    if (command === "restart") {
+      restart();
+    }
+
+    if (command === "copy") {
+      copyText(window.location.href, "site");
+    }
+  });
+});
+
+socialLinks.forEach((link) => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    copyText(link.dataset.copy, link.dataset.copyLabel);
+  });
+});
 
 function setupVisualizer() {
   if (audioContext) {
