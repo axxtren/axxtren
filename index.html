@@ -1,159 +1,201 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>axxtren</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>axxtren</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-    }
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      overflow: hidden;
-      background: #000;
-    }
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  overflow: hidden;
+  cursor: default;
+}
 
-    /* background image blur */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: url("a.png") center/cover no-repeat;
-      transform: scale(1.1);
-      filter: blur(18px);
-      opacity: 0.55;
-      z-index: -2;
-    }
+/* background (38% blur vibe) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url("a.png") center/cover no-repeat;
+  transform: scale(1.1);
+  filter: blur(10px); /* ~38% vibe (less aggressive than before) */
+  opacity: 0.6;
+  z-index: -2;
+}
 
-    /* dark overlay */
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.55);
-      z-index: -1;
-    }
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: -1;
+}
 
-    .container {
-      width: 100%;
-      max-width: 420px;
-      text-align: center;
-      padding: 20px;
-    }
+.container {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  padding: 20px;
+}
 
-    /* username */
-    .name {
-      font-size: 44px;
-      font-weight: 600;
-      margin-bottom: 25px;
-      letter-spacing: 1px;
-      text-shadow: 0 0 6px rgba(255,255,255,0.25);
-    }
+.name {
+  font-size: 44px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 6px rgba(255,255,255,0.22);
+}
 
-    /* glass card */
-    .card {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      backdrop-filter: blur(14px);
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
+/* cards */
+.card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
 
-    /* buttons */
-    .btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+/* buttons */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 
-      text-decoration: none;
-      color: white;
+  text-decoration: none;
+  color: white;
 
-      padding: 12px;
-      margin: 10px 0;
+  padding: 12px;
+  margin: 10px 0;
 
-      border-radius: 14px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
 
-      transition: 0.2s;
-    }
+  transition: 0.2s;
+  cursor: pointer;
+}
 
-    .btn:hover {
-      transform: scale(1.03);
-      background: rgba(255,255,255,0.14);
-    }
+.btn:hover {
+  transform: scale(1.03);
+  background: rgba(255,255,255,0.14);
+}
 
-    /* icons */
-    .icon {
-      width: 18px;
-      height: 18px;
-      fill: white;
-      opacity: 0.9;
-    }
+/* icons */
+.icon {
+  width: 18px;
+  height: 18px;
+  fill: white;
+  opacity: 0.9;
+}
 
-    /* music player */
-    .player {
-      position: fixed;
-      bottom: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90%;
-      max-width: 420px;
+/* MUSIC PLAYER */
+.player {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 420px;
 
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      backdrop-filter: blur(14px);
-      border-radius: 16px;
-      padding: 12px;
-    }
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(14px);
+  border-radius: 16px;
+  padding: 12px;
+}
 
-    .row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 8px;
-    }
+/* song text */
+.song-title {
+  font-size: 14px;
+  font-weight: 500;
+}
 
-    button {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
-      color: white;
-      border-radius: 10px;
-      padding: 6px 10px;
-      cursor: pointer;
-    }
+.song-artist {
+  font-size: 11px;
+  opacity: 0.6;
+  margin-top: 2px;
+}
 
-    button:hover {
-      background: rgba(255,255,255,0.15);
-    }
+/* controls row */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
 
-    input[type="range"] {
-      width: 100%;
-    }
+/* buttons */
+button {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: white;
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
 
-    .time {
-      font-size: 11px;
-      opacity: 0.7;
-    }
-  </style>
+button:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* sliders = pointer hand vibe */
+input[type="range"] {
+  width: 100%;
+  cursor: pointer;
+}
+
+/* time */
+.time {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* volume hover reveal */
+.volume-wrap {
+  position: relative;
+}
+
+.volume-slider {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.25s ease;
+
+  background: rgba(0,0,0,0.4);
+  padding: 8px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.volume-wrap:hover .volume-slider {
+  opacity: 1;
+  pointer-events: auto;
+}
+</style>
 </head>
 
 <body>
 
 <div class="container">
-
   <div class="name">axxtren</div>
 
   <div class="card">
@@ -161,7 +203,7 @@
     <!-- discord -->
     <a class="btn" href="https://discord.com/users/1462056813691273295" target="_blank">
       <svg class="icon" viewBox="0 0 24 24">
-        <path d="M20 4s-2-2-8-2-8 2-8 2-2 8 0 16c6 4 10 4 16 0 2-8 0-16 0-16zm-5 12s-1-1-3-1-3 1-3 1v-1s1-2 3-2 3 2 3 2v1zm-6-3c0-1 1-2 2-2s2 1 2 2-1 2-2 2-2-1-2-2zm8 0c0-1 1-2 2-2s2 1 2 2-1 2-2 2-2-1-2-2z"/>
+        <path d="M20 4s-2-2-8-2-8 2-8 2-2 8 0 16c6 4 10 4 16 0 2-8 0-16 0-16z"/>
       </svg>
       discord
     </a>
@@ -169,7 +211,7 @@
     <!-- telegram -->
     <a class="btn" href="https://t.me/axxxtren" target="_blank">
       <svg class="icon" viewBox="0 0 24 24">
-        <path d="M9.04 15.47l-.39 5.5c.56 0 .81-.24 1.1-.52l2.63-2.52 5.46 4c1 .55 1.7.26 2-.93l3.6-16.9h0c.32-1.5-.54-2.1-1.52-1.7L1.6 9.1c-1.45.57-1.43 1.38-.25 1.75l5.7 1.78 13.2-8.3c.62-.4 1.18-.18.71.22"/>
+        <path d="M9 16l-.5 5 2.5-2 3 2 5-14L3 10l6 2 12-8z"/>
       </svg>
       telegram
     </a>
@@ -177,8 +219,11 @@
   </div>
 </div>
 
-<!-- music player -->
+<!-- MUSIC -->
 <div class="player">
+
+  <div class="song-title">Randomly</div>
+  <div class="song-artist">LUCKI</div>
 
   <audio id="audio" src="Randomly.mp3" autoplay loop></audio>
 
@@ -188,11 +233,15 @@
   </div>
 
   <div class="row">
-    <input type="range" id="seek" value="0" min="0">
+    <input type="range" id="seek" min="0" value="0">
   </div>
 
-  <div class="row">
-    <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+  <div class="row volume-wrap">
+    <div style="font-size:12px;opacity:0.7;">vol</div>
+
+    <div class="volume-slider">
+      <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+    </div>
   </div>
 
   <div class="time" id="time">0:00 / 0:00</div>
@@ -214,17 +263,23 @@ function restart() {
   audio.play();
 }
 
+/* show time immediately when metadata loads */
 audio.addEventListener("loadedmetadata", () => {
   seek.max = audio.duration;
+  updateTime();
 });
 
+/* live update */
 audio.addEventListener("timeupdate", () => {
   seek.value = audio.currentTime;
+  updateTime();
+});
 
+function updateTime() {
   const cur = format(audio.currentTime);
   const dur = format(audio.duration);
   time.textContent = `${cur} / ${dur}`;
-});
+}
 
 seek.addEventListener("input", () => {
   audio.currentTime = seek.value;
@@ -240,6 +295,14 @@ function format(s) {
   const sec = Math.floor(s % 60).toString().padStart(2, "0");
   return `${m}:${sec}`;
 }
+
+/* force initial UI update */
+setTimeout(() => {
+  if (!isNaN(audio.duration)) {
+    seek.max = audio.duration;
+    updateTime();
+  }
+}, 500);
 </script>
 
 </body>
