@@ -10,64 +10,58 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system;
 }
 
 body {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
   overflow: hidden;
+  color: white;
 }
 
-/* BACKGROUND (less blur, no grey gradient) */
+/* background FIXED (less blur, no grey wash) */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   background: url("a.png") center/cover no-repeat;
-  transform: scale(1.05);
-  filter: blur(9px); /* reduced ~1/3 */
-  opacity: 0.9;
+  transform: scale(1.03);
+  filter: blur(7px); /* real reduction */
+  opacity: 0.95;
   z-index: -1;
 }
 
-/* MAIN */
+/* container */
 .container {
-  width: 100%;
-  max-width: 420px;
+  width: 420px;
   text-align: center;
-  padding: 20px;
 }
 
 .name {
   font-size: 44px;
   font-weight: 600;
   margin-bottom: 25px;
-  text-shadow: 0 0 6px rgba(255,255,255,0.18);
+  text-shadow: 0 0 6px rgba(255,255,255,0.15);
 }
 
-/* GLASS */
+/* glass cards */
 .card {
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.12);
   backdrop-filter: blur(14px);
   border-radius: 18px;
   padding: 16px;
-  margin-bottom: 16px;
 }
 
-/* BUTTONS */
+/* BUTTONS (unified animation system) */
 .btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-
-  text-decoration: none;
-  color: white;
 
   padding: 12px;
   margin: 10px 0;
@@ -76,9 +70,10 @@ body::before {
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.15);
 
-  cursor: pointer;
+  color: white;
+  text-decoration: none;
 
-  transition: all 0.25s ease;
+  transition: transform 0.18s ease, background 0.18s ease;
 }
 
 .btn:hover {
@@ -86,9 +81,8 @@ body::before {
   background: rgba(255,255,255,0.14);
 }
 
-/* smooth click feel */
 .btn:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 /* ICONS */
@@ -96,7 +90,6 @@ body::before {
   width: 18px;
   height: 18px;
   fill: white;
-  opacity: 0.9;
 }
 
 /* PLAYER */
@@ -105,8 +98,7 @@ body::before {
   bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
-  max-width: 420px;
+  width: 420px;
 
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.12);
@@ -115,26 +107,20 @@ body::before {
   padding: 12px;
 }
 
-/* SONG INFO */
-.song-title {
-  font-size: 14px;
-}
+/* song info */
+.song-title { font-size: 14px; }
+.song-artist { font-size: 11px; opacity: 0.6; }
 
-.song-artist {
-  font-size: 11px;
-  opacity: 0.6;
-}
-
-/* ROWS */
+/* controls row */
 .row {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 10px;
   margin-top: 10px;
 }
 
-/* CONTROLS */
+/* buttons */
 button {
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.15);
@@ -142,82 +128,73 @@ button {
   border-radius: 10px;
   padding: 7px 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: 0.15s ease;
 }
 
 button:hover {
   transform: scale(1.05);
-  background: rgba(255,255,255,0.14);
 }
 
-button:active {
-  transform: scale(0.95);
-}
-
-/* SLIDERS */
+/* sliders */
 input[type="range"] {
   width: 100%;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-/* TIME */
+/* time smooth */
 .time {
   font-size: 11px;
   opacity: 0.7;
   margin-top: 6px;
-  transition: opacity 0.3s ease;
 }
 
-/* VOLUME */
+/* volume system FIXED */
 .volume-wrap {
   position: relative;
   display: flex;
+  align-items: center;
+}
+
+.vol-btn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  margin-top: 10px;
-}
 
-/* volume hover zone FIX */
-.volume-hover-zone {
-  position: absolute;
-  bottom: 40px;
-  width: 160px;
-  padding: 12px;
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.25s ease;
-}
-
-.volume-wrap:hover .volume-hover-zone {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* volume box */
-.volume-box {
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(12px);
-  border-radius: 12px;
-  padding: 10px;
-}
-
-/* smooth slider */
-.volume-box input {
-  width: 100%;
-}
-
-/* icon button */
-.vol-icon {
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.15);
   border-radius: 10px;
-  padding: 6px 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: 0.15s ease;
 }
 
-.vol-icon:hover {
+.vol-btn:hover {
   transform: scale(1.05);
+}
+
+/* hover zone FIXED (no dead zone) */
+.volume-panel {
+  position: absolute;
+  bottom: 42px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 150px;
+  padding: 10px;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s ease;
+
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+}
+
+.volume-wrap:hover .volume-panel {
+  opacity: 1;
+  pointer-events: auto;
 }
 </style>
 </head>
@@ -230,18 +207,18 @@ input[type="range"] {
 
   <div class="card">
 
-    <!-- DISCORD (fixed icon) -->
+    <!-- discord FIXED -->
     <a class="btn" href="https://discord.com/users/1462056813691273295" target="_blank">
       <svg class="icon" viewBox="0 0 24 24">
-        <path d="M20 4.5c-1.6-1-3.3-1.7-5.1-2.1l-.3.6c-1.8-.3-3.7-.3-5.5 0l-.3-.6C7.1 2.8 5.4 3.5 3.8 4.5 1.3 8 1 11.5 1.3 15c2 1.6 4.1 2.6 6.3 3.2l.8-1.2c-1.2-.4-2.3-1-3.4-1.7l.3-.2c2.8 1.3 5.9 1.3 8.7 0l.3.2c-1 .7-2.2 1.3-3.4 1.7l.8 1.2c2.2-.6 4.3-1.6 6.3-3.2.3-3.5 0-7-2.7-10.5zM8.5 13.5c-.7 0-1.3-.6-1.3-1.3s.6-1.3 1.3-1.3 1.3.6 1.3 1.3-.6 1.3-1.3 1.3zm7 0c-.7 0-1.3-.6-1.3-1.3s.6-1.3 1.3-1.3 1.3.6 1.3 1.3-.6 1.3-1.3 1.3z"/>
+        <path d="M20 4.4c-1.6-1-3.4-1.7-5.3-2.1l-.2.5c-1.9-.3-3.9-.3-5.8 0l-.2-.5C6.6 2.7 4.8 3.4 3.2 4.4 1.2 7.6.7 11.3 1.2 15c2 1.5 4.2 2.6 6.4 3.1l.8-1.2c-1.3-.4-2.4-1-3.5-1.7l.3-.2c2.9 1.3 6.1 1.3 9 0l.3.2c-1.1.7-2.2 1.3-3.5 1.7l.8 1.2c2.2-.5 4.4-1.6 6.4-3.1.5-3.7 0-7.4-2.8-10.6zM8.7 13.6c-.7 0-1.3-.6-1.3-1.3s.6-1.3 1.3-1.3 1.3.6 1.3 1.3-.6 1.3-1.3 1.3zm6.6 0c-.7 0-1.3-.6-1.3-1.3s.6-1.3 1.3-1.3 1.3.6 1.3 1.3-.6 1.3-1.3 1.3z"/>
       </svg>
       discord
     </a>
 
-    <!-- TELEGRAM -->
+    <!-- telegram -->
     <a class="btn" href="https://t.me/axxxtren" target="_blank">
       <svg class="icon" viewBox="0 0 24 24">
-        <path d="M9.9 16.2 9.4 21c.6 0 .8-.3 1.1-.6l2.6-2.5 5.3 3.9c1 .6 1.7.3 2-.9l3.6-16.8c.3-1.5-.5-2.1-1.5-1.7L2 9.2c-1.4.6-1.4 1.4-.2 1.7l5.6 1.8 13-8.1c.6-.4 1.1-.2.7.2z"/>
+        <path d="M9.8 16.2 9.4 21c.6 0 .8-.3 1.1-.6l2.6-2.5 5.3 3.9c1 .6 1.7.3 2-.9l3.6-16.8c.3-1.5-.5-2.1-1.5-1.7L2 9.2c-1.4.6-1.4 1.4-.2 1.7l5.6 1.8 13-8.1c.6-.4 1.1-.2.7.2z"/>
       </svg>
       telegram
     </a>
@@ -257,28 +234,22 @@ input[type="range"] {
 
   <audio id="audio" src="Randomly.mp3" autoplay loop></audio>
 
-  <!-- controls row -->
   <div class="row">
     <button id="playBtn" onclick="togglePlay()">▶</button>
     <button onclick="restart()">⟲</button>
 
-    <!-- volume icon -->
+    <!-- volume icon FIXED -->
     <div class="volume-wrap">
-      <button class="vol-icon">🔊</button>
+      <div class="vol-btn">🔊</div>
 
-      <div class="volume-hover-zone">
-        <div class="volume-box">
-          <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
-        </div>
+      <div class="volume-panel">
+        <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
       </div>
     </div>
-
   </div>
 
-  <!-- time -->
   <div class="time" id="time">0:00 / 0:00</div>
 
-  <!-- seek -->
   <div class="row">
     <input type="range" id="seek" min="0" value="0">
   </div>
@@ -291,6 +262,22 @@ const seek = document.getElementById("seek");
 const volume = document.getElementById("volume");
 const time = document.getElementById("time");
 const playBtn = document.getElementById("playBtn");
+
+/* smooth animation loop (fixes “teleport” feel) */
+function loop() {
+  if (!isNaN(audio.duration)) {
+    seek.value = audio.currentTime;
+
+    const m = Math.floor(audio.currentTime / 60);
+    const s = Math.floor(audio.currentTime % 60).toString().padStart(2,"0");
+    const md = Math.floor(audio.duration / 60);
+    const sd = Math.floor(audio.duration % 60).toString().padStart(2,"0");
+
+    time.textContent = `${m}:${s} / ${md}:${sd}`;
+  }
+  requestAnimationFrame(loop);
+}
+loop();
 
 function togglePlay() {
   if (audio.paused) {
@@ -308,38 +295,13 @@ function restart() {
   playBtn.textContent = "⏸";
 }
 
-/* smooth time + seek */
-audio.addEventListener("loadedmetadata", () => {
-  seek.max = audio.duration;
-  playBtn.textContent = audio.paused ? "▶" : "⏸";
-});
-
-audio.addEventListener("timeupdate", () => {
-  seek.value = audio.currentTime;
-  updateTime();
-});
-
-function updateTime() {
-  const cur = fmt(audio.currentTime);
-  const dur = fmt(audio.duration);
-  time.textContent = `${cur} / ${dur}`;
-}
-
 seek.addEventListener("input", () => {
   audio.currentTime = seek.value;
 });
 
-/* volume */
 volume.addEventListener("input", () => {
   audio.volume = volume.value;
 });
-
-function fmt(s) {
-  if (!isFinite(s)) return "0:00";
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60).toString().padStart(2,"0");
-  return `${m}:${sec}`;
-}
 </script>
 
 </body>
