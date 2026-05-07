@@ -22,23 +22,15 @@ body {
   overflow: hidden;
 }
 
-/* BACKGROUND (clean blur, no grey wash) */
+/* BACKGROUND (less blur, no grey gradient) */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   background: url("a.png") center/cover no-repeat;
-  transform: scale(1.08);
-  filter: blur(14px);
-  opacity: 0.85;
-  z-index: -2;
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at top, rgba(0,0,0,0.25), rgba(0,0,0,0.6));
+  transform: scale(1.05);
+  filter: blur(9px); /* reduced ~1/3 */
+  opacity: 0.9;
   z-index: -1;
 }
 
@@ -54,11 +46,10 @@ body::after {
   font-size: 44px;
   font-weight: 600;
   margin-bottom: 25px;
-  letter-spacing: 1px;
-  text-shadow: 0 0 6px rgba(255,255,255,0.2);
+  text-shadow: 0 0 6px rgba(255,255,255,0.18);
 }
 
-/* GLASS CARD */
+/* GLASS */
 .card {
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.12);
@@ -85,19 +76,27 @@ body::after {
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.15);
 
-  transition: 0.2s;
   cursor: pointer;
+
+  transition: all 0.25s ease;
 }
 
 .btn:hover {
-  transform: scale(1.03);
+  transform: translateY(-2px) scale(1.02);
   background: rgba(255,255,255,0.14);
 }
 
+/* smooth click feel */
+.btn:active {
+  transform: scale(0.98);
+}
+
+/* ICONS */
 .icon {
   width: 18px;
   height: 18px;
   fill: white;
+  opacity: 0.9;
 }
 
 /* PLAYER */
@@ -119,22 +118,20 @@ body::after {
 /* SONG INFO */
 .song-title {
   font-size: 14px;
-  font-weight: 500;
 }
 
 .song-artist {
   font-size: 11px;
   opacity: 0.6;
-  margin-top: 2px;
 }
 
 /* ROWS */
 .row {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   margin-top: 10px;
-  justify-content: center;
 }
 
 /* CONTROLS */
@@ -143,17 +140,25 @@ button {
   border: 1px solid rgba(255,255,255,0.15);
   color: white;
   border-radius: 10px;
-  padding: 6px 10px;
+  padding: 7px 10px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 button:hover {
-  background: rgba(255,255,255,0.15);
+  transform: scale(1.05);
+  background: rgba(255,255,255,0.14);
 }
 
+button:active {
+  transform: scale(0.95);
+}
+
+/* SLIDERS */
 input[type="range"] {
   width: 100%;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 /* TIME */
@@ -161,6 +166,7 @@ input[type="range"] {
   font-size: 11px;
   opacity: 0.7;
   margin-top: 6px;
+  transition: opacity 0.3s ease;
 }
 
 /* VOLUME */
@@ -168,42 +174,50 @@ input[type="range"] {
   position: relative;
   display: flex;
   justify-content: center;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
+/* volume hover zone FIX */
+.volume-hover-zone {
+  position: absolute;
+  bottom: 40px;
+  width: 160px;
+  padding: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.25s ease;
+}
+
+.volume-wrap:hover .volume-hover-zone {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* volume box */
+.volume-box {
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+/* smooth slider */
+.volume-box input {
+  width: 100%;
+}
+
+/* icon button */
 .vol-icon {
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.15);
   border-radius: 10px;
   padding: 6px 10px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.volume-slider {
-  position: absolute;
-  bottom: 45px;
-  width: 140px;
-
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.2s ease;
-
-  background: rgba(0,0,0,0.45);
-  padding: 10px;
-  border-radius: 12px;
-  backdrop-filter: blur(12px);
-}
-
-.volume-wrap:hover .volume-slider {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.vol-percent {
-  font-size: 11px;
-  opacity: 0.7;
-  margin-top: 4px;
-  text-align: center;
+.vol-icon:hover {
+  transform: scale(1.05);
 }
 </style>
 </head>
@@ -216,18 +230,18 @@ input[type="range"] {
 
   <div class="card">
 
-    <!-- discord -->
+    <!-- DISCORD (fixed icon) -->
     <a class="btn" href="https://discord.com/users/1462056813691273295" target="_blank">
       <svg class="icon" viewBox="0 0 24 24">
-        <path d="M20 4.4a16 16 0 0 0-4-1.3l-.2.4a15 15 0 0 1 3.5 1.7 12 12 0 0 0-10.6 0 15 15 0 0 1 3.5-1.7l-.2-.4a16 16 0 0 0-4 1.3C3.5 8 2.8 11.5 3 15c2 1.5 4 2.4 6 3 0 0 .5-.6.9-1.1a12 12 0 0 1-1.7-.8l.3-.2c3.3 1.5 6.9 1.5 10.2 0l.3.2a12 12 0 0 1-1.7.8c.4.5.9 1.1.9 1.1 2-.6 4-1.5 6-3 .2-3.5-.5-7-3-10.6z"/>
+        <path d="M20 4.5c-1.6-1-3.3-1.7-5.1-2.1l-.3.6c-1.8-.3-3.7-.3-5.5 0l-.3-.6C7.1 2.8 5.4 3.5 3.8 4.5 1.3 8 1 11.5 1.3 15c2 1.6 4.1 2.6 6.3 3.2l.8-1.2c-1.2-.4-2.3-1-3.4-1.7l.3-.2c2.8 1.3 5.9 1.3 8.7 0l.3.2c-1 .7-2.2 1.3-3.4 1.7l.8 1.2c2.2-.6 4.3-1.6 6.3-3.2.3-3.5 0-7-2.7-10.5zM8.5 13.5c-.7 0-1.3-.6-1.3-1.3s.6-1.3 1.3-1.3 1.3.6 1.3 1.3-.6 1.3-1.3 1.3zm7 0c-.7 0-1.3-.6-1.3-1.3s.6-1.3 1.3-1.3 1.3.6 1.3 1.3-.6 1.3-1.3 1.3z"/>
       </svg>
       discord
     </a>
 
-    <!-- telegram -->
+    <!-- TELEGRAM -->
     <a class="btn" href="https://t.me/axxxtren" target="_blank">
       <svg class="icon" viewBox="0 0 24 24">
-        <path d="M9.8 16.6 9.4 21c.6 0 .8-.3 1.1-.6l2.6-2.5 5.3 3.9c1 .6 1.7.3 2-.9l3.6-16.8c.3-1.5-.5-2.1-1.5-1.7L2 9.2c-1.4.6-1.4 1.4-.2 1.7l5.6 1.8 13-8.1c.6-.4 1.1-.2.7.2z"/>
+        <path d="M9.9 16.2 9.4 21c.6 0 .8-.3 1.1-.6l2.6-2.5 5.3 3.9c1 .6 1.7.3 2-.9l3.6-16.8c.3-1.5-.5-2.1-1.5-1.7L2 9.2c-1.4.6-1.4 1.4-.2 1.7l5.6 1.8 13-8.1c.6-.4 1.1-.2.7.2z"/>
       </svg>
       telegram
     </a>
@@ -243,26 +257,30 @@ input[type="range"] {
 
   <audio id="audio" src="Randomly.mp3" autoplay loop></audio>
 
+  <!-- controls row -->
   <div class="row">
     <button id="playBtn" onclick="togglePlay()">▶</button>
     <button onclick="restart()">⟲</button>
-  </div>
 
-  <div class="time" id="time">0:00 / 0:00</div>
+    <!-- volume icon -->
+    <div class="volume-wrap">
+      <button class="vol-icon">🔊</button>
 
-  <div class="row">
-    <input type="range" id="seek" min="0" value="0">
-  </div>
-
-  <div class="volume-wrap">
-
-    <button class="vol-icon">🔊</button>
-
-    <div class="volume-slider">
-      <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
-      <div class="vol-percent" id="volPercent">50%</div>
+      <div class="volume-hover-zone">
+        <div class="volume-box">
+          <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+        </div>
+      </div>
     </div>
 
+  </div>
+
+  <!-- time -->
+  <div class="time" id="time">0:00 / 0:00</div>
+
+  <!-- seek -->
+  <div class="row">
+    <input type="range" id="seek" min="0" value="0">
   </div>
 
 </div>
@@ -273,7 +291,6 @@ const seek = document.getElementById("seek");
 const volume = document.getElementById("volume");
 const time = document.getElementById("time");
 const playBtn = document.getElementById("playBtn");
-const volPercent = document.getElementById("volPercent");
 
 function togglePlay() {
   if (audio.paused) {
@@ -291,9 +308,9 @@ function restart() {
   playBtn.textContent = "⏸";
 }
 
+/* smooth time + seek */
 audio.addEventListener("loadedmetadata", () => {
   seek.max = audio.duration;
-  updateTime();
   playBtn.textContent = audio.paused ? "▶" : "⏸";
 });
 
@@ -303,8 +320,8 @@ audio.addEventListener("timeupdate", () => {
 });
 
 function updateTime() {
-  const cur = format(audio.currentTime);
-  const dur = format(audio.duration);
+  const cur = fmt(audio.currentTime);
+  const dur = fmt(audio.duration);
   time.textContent = `${cur} / ${dur}`;
 }
 
@@ -312,15 +329,15 @@ seek.addEventListener("input", () => {
   audio.currentTime = seek.value;
 });
 
+/* volume */
 volume.addEventListener("input", () => {
   audio.volume = volume.value;
-  volPercent.textContent = Math.round(volume.value * 100) + "%";
 });
 
-function format(s) {
+function fmt(s) {
   if (!isFinite(s)) return "0:00";
   const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60).toString().padStart(2, "0");
+  const sec = Math.floor(s % 60).toString().padStart(2,"0");
   return `${m}:${sec}`;
 }
 </script>
