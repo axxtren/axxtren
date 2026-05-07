@@ -216,7 +216,7 @@ body::after {
   position: relative;
   display: inline-block;
   margin-top: 13px;
-  padding: 7px 16px 8px;
+  padding: 7px 18px 9px;
   border: 1px solid rgba(255,255,255,0.13);
   border-radius: 999px;
   background:
@@ -227,12 +227,15 @@ body::after {
     0 12px 30px rgba(0,0,0,0.22);
   backdrop-filter: blur(18px) saturate(1.4);
   -webkit-backdrop-filter: blur(18px) saturate(1.4);
-  font-size: clamp(28px, 8vw, 42px);
+  font-size: clamp(30px, 8vw, 44px);
   line-height: 1;
-  font-weight: 250;
-  color: rgba(255,255,255,0.9);
+  font-weight: 300;
+  color: rgba(255,255,255,0.78);
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 10px 30px rgba(0,0,0,0.36);
+  text-shadow:
+    0 1px 1px rgba(255,255,255,0.25),
+    0 10px 30px rgba(0,0,0,0.36);
+  -webkit-text-stroke: 0.45px rgba(255,255,255,0.18);
 }
 
 .socials {
@@ -370,23 +373,12 @@ body::after {
     linear-gradient(to top, rgba(0,0,0,0.34), transparent 55%);
 }
 
-.cover-mark {
-  position: absolute;
-  left: 9px;
-  bottom: 8px;
-  z-index: 1;
-  font-size: 11px;
-  line-height: 1;
-  font-weight: 800;
-  color: rgba(255,255,255,0.9);
-}
-
 .song-title {
   font-size: 16px;
-  line-height: 1.1;
-  font-weight: 800;
+  line-height: 1.15;
+  font-weight: 650;
   text-align: left;
-  color: white;
+  color: rgba(255,255,255,0.9);
   letter-spacing: 0;
 }
 
@@ -684,7 +676,6 @@ input[type="range"]::-moz-range-thumb {
 <aside class="player" aria-label="Music player">
   <div class="track-head">
     <div class="cover" aria-hidden="true">
-      <span class="cover-mark">RX</span>
     </div>
     <div class="track-copy">
       <div class="song-title">Randomly</div>
