@@ -125,13 +125,13 @@ body::after {
 .playlist-item {
   width: 100%;
   display: grid;
-  grid-template-columns: 24px 1fr;
-  gap: 10px;
+  grid-template-columns: 18px 1fr;
+  gap: 8px;
   align-items: center;
   appearance: none;
   border: 0;
   border-radius: 16px;
-  padding: 9px 10px;
+  padding: 8px 10px;
   background: transparent;
   color: white;
   cursor: pointer;
@@ -149,20 +149,17 @@ body::after {
 }
 
 .playlist-number {
-  width: 24px;
-  height: 24px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  font-size: 11px;
+  width: 18px;
+  display: block;
+  font-size: 10px;
+  line-height: 1;
   font-weight: 800;
-  color: rgba(255,255,255,0.62);
+  color: rgba(255,255,255,0.42);
+  text-align: right;
 }
 
 .playlist-item.active .playlist-number {
-  background: rgba(255,255,255,0.9);
-  color: rgba(0,0,0,0.82);
+  color: rgba(255,255,255,0.92);
 }
 
 .playlist-song {
@@ -199,7 +196,7 @@ body::after {
 
 .spotify-frame {
   width: 100%;
-  height: 152px;
+  height: 92px;
   display: block;
   border: 0;
 }
@@ -643,63 +640,63 @@ input[type="range"]::-moz-range-thumb {
 
   <div class="playlist-list" id="playlistList">
     <button class="playlist-item active" type="button" data-track="6P8rBeOxn0ervew8cr0jcD">
-      <span class="playlist-number">01</span>
+      <span class="playlist-number">1</span>
       <span>
         <span class="playlist-song">Randomly</span>
         <span class="playlist-artist">LUCKI</span>
       </span>
     </button>
     <button class="playlist-item" type="button" data-track="4IO2X2YoXoUMv0M2rwomLC">
-      <span class="playlist-number">02</span>
+      <span class="playlist-number">2</span>
       <span>
         <span class="playlist-song">Long Time - Intro</span>
         <span class="playlist-artist">Playboi Carti</span>
       </span>
     </button>
     <button class="playlist-item" type="button" data-track="42tD9J0KCPFSc1d2hFTvAf">
-      <span class="playlist-number">03</span>
+      <span class="playlist-number">3</span>
       <span>
         <span class="playlist-song">NOSTYLIST</span>
         <span class="playlist-artist">Destroy Lonely</span>
       </span>
     </button>
     <button class="playlist-item" type="button" data-track="3ALLj0DA6C4oqfNR6pnWpN">
-      <span class="playlist-number">04</span>
+      <span class="playlist-number">4</span>
       <span>
         <span class="playlist-song">new new</span>
         <span class="playlist-artist">Destroy Lonely</span>
       </span>
     </button>
     <button class="playlist-item" type="button" data-track="26QJuQfM8PVAWkIm1JRyqq">
-      <span class="playlist-number">05</span>
+      <span class="playlist-number">5</span>
       <span>
         <span class="playlist-song">ss</span>
         <span class="playlist-artist">Ken Carson</span>
       </span>
     </button>
     <button class="playlist-item" type="button" data-track="2gSPHSdf0vrk2Psxmn8sUn">
-      <span class="playlist-number">06</span>
+      <span class="playlist-number">6</span>
       <span>
         <span class="playlist-song">i need u</span>
         <span class="playlist-artist">Ken Carson</span>
       </span>
     </button>
     <button class="playlist-item" type="button" data-track="3OUfsApmvr7mwIm0rSbqbu">
-      <span class="playlist-number">07</span>
+      <span class="playlist-number">7</span>
       <span>
         <span class="playlist-song">leather jacket</span>
         <span class="playlist-artist">Ken Carson</span>
       </span>
     </button>
     <button class="playlist-item" type="button" data-track="56BtPjjWiRc0ch7DH8DNu9">
-      <span class="playlist-number">08</span>
+      <span class="playlist-number">8</span>
       <span>
         <span class="playlist-song">Trap Jump</span>
         <span class="playlist-artist">Ken Carson</span>
       </span>
     </button>
     <button class="playlist-item" type="button" data-track="3FMKkmAXsCrJM9ZDIbQejN">
-      <span class="playlist-number">09</span>
+      <span class="playlist-number">9</span>
       <span>
         <span class="playlist-song">THRILL</span>
         <span class="playlist-artist">Destroy Lonely, Ken Carson</span>
@@ -968,7 +965,7 @@ playlistItems.forEach((item) => {
 
     playlistItems.forEach((playlistItem) => playlistItem.classList.remove("active"));
     item.classList.add("active");
-    spotifyFrame.src = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0`;
+    spotifyFrame.src = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0&autoplay=1`;
   });
 });
 </script>
