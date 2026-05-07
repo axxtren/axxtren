@@ -34,6 +34,8 @@ body {
   overflow: hidden;
   color: var(--white);
   background: #050507;
+  opacity: 0;
+  animation: pageFadeIn 720ms ease forwards;
 }
 
 body::before {
@@ -156,6 +158,18 @@ body::after {
   box-shadow: 0 0 12px rgba(56,242,109,0.65);
 }
 
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
 .page {
   width: min(500px, calc(100vw - 32px));
   display: grid;
@@ -191,11 +205,34 @@ body::after {
 }
 
 .name {
-  font-size: clamp(40px, 10vw, 58px);
+  font-size: clamp(36px, 9vw, 52px);
   line-height: 0.92;
   font-weight: 800;
   letter-spacing: 0;
   text-shadow: 0 10px 36px rgba(0,0,0,0.46);
+}
+
+.lock-time {
+  position: relative;
+  display: inline-block;
+  margin-top: 13px;
+  padding: 7px 16px 8px;
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 999px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.035)),
+    rgba(8,8,12,0.18);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.24),
+    0 12px 30px rgba(0,0,0,0.22);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  font-size: clamp(28px, 8vw, 42px);
+  line-height: 1;
+  font-weight: 250;
+  color: rgba(255,255,255,0.9);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.36);
 }
 
 .socials {
@@ -579,7 +616,7 @@ input[type="range"]::-moz-range-thumb {
 <aside class="side-panel" aria-label="Site details">
   <div class="terminal" aria-label="Mini terminal">
     <div class="terminal-line">
-      <span>axxtren@site</span>
+      <span>axxtren.xyz</span>
       <span class="terminal-value">online</span>
     </div>
     <div class="terminal-line">
@@ -587,12 +624,16 @@ input[type="range"]::-moz-range-thumb {
       <span class="terminal-value">Randomly - LUCKI</span>
     </div>
     <div class="terminal-line">
+      <span class="terminal-key">state</span>
+      <span class="terminal-value" id="terminalState">paused</span>
+    </div>
+    <div class="terminal-line">
       <span class="terminal-key">volume</span>
       <span class="terminal-value" id="terminalVolume">15%</span>
     </div>
     <div class="terminal-line">
       <span class="terminal-key">session</span>
-      <span class="terminal-value">liquid glass</span>
+      <span class="terminal-value">synced</span>
     </div>
   </div>
 
@@ -622,6 +663,7 @@ input[type="range"]::-moz-range-thumb {
 <main class="page">
   <section class="identity" aria-label="Profile">
     <h1 class="name">axxtren</h1>
+    <div class="lock-time" id="lockTime">00:00</div>
   </section>
 
   <nav class="socials" aria-label="Social links">
@@ -694,6 +736,8 @@ const time = document.getElementById("time");
 const playBtn = document.getElementById("playBtn");
 const playIcon = document.getElementById("playIcon");
 const terminalVolume = document.getElementById("terminalVolume");
+const terminalState = document.getElementById("terminalState");
+const lockTime = document.getElementById("lockTime");
 const visualizerBars = document.querySelectorAll(".bar");
 
 let isSeeking = false;
@@ -715,9 +759,17 @@ function formatTime(seconds) {
 
 function setPlayIcon(isPlaying) {
   playBtn.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
+  terminalState.textContent = isPlaying ? "playing" : "paused";
   playIcon.innerHTML = isPlaying
     ? '<path d="M7 5h4v14H7V5Zm6 0h4v14h-4V5Z"/>'
     : '<path d="M8 5v14l11-7z"/>';
+}
+
+function updateLockTime() {
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, "0");
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  lockTime.textContent = `${hours}:${minutes}`;
 }
 
 function updateVolumeLabel() {
@@ -765,7 +817,8 @@ function updatePlayer() {
       seek.value = audio.currentTime;
     }
 
-    time.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+    const displayTime = isSeeking ? Number(seek.value) : audio.currentTime;
+    time.textContent = `${formatTime(displayTime)} / ${formatTime(audio.duration)}`;
   }
 
   requestAnimationFrame(updatePlayer);
@@ -816,15 +869,16 @@ function pauseWithFade() {
 }
 
 audio.volume = targetVolume();
+updateLockTime();
 updateVolumeLabel();
 updatePlayer();
+setInterval(updateLockTime, 1000);
 
 audio.addEventListener("play", () => setPlayIcon(true));
 audio.addEventListener("pause", () => setPlayIcon(false));
 
 seek.addEventListener("input", () => {
   isSeeking = true;
-  audio.currentTime = Number(seek.value);
 });
 
 seek.addEventListener("change", () => {
@@ -874,8 +928,16 @@ function animateVisualizer() {
     analyser.getByteFrequencyData(visualizerData);
 
     visualizerBars.forEach((bar, index) => {
-      const dataIndex = Math.floor(index * visualizerData.length / visualizerBars.length);
-      const value = visualizerData[dataIndex] / 255;
+      const start = Math.floor(index * visualizerData.length * 0.64 / visualizerBars.length);
+      const end = Math.max(start + 1, Math.floor((index + 1) * visualizerData.length * 0.64 / visualizerBars.length));
+      let total = 0;
+
+      for (let dataIndex = start; dataIndex <= end; dataIndex++) {
+        total += visualizerData[dataIndex] || 0;
+      }
+
+      const mirroredEnergy = visualizerData[Math.max(0, visualizerData.length - index - 8)] || 0;
+      const value = Math.max(total / ((end - start + 1) * 255), mirroredEnergy / 420);
       const height = 16 + value * 108;
       bar.style.height = `${height}px`;
       bar.style.opacity = `${0.45 + value * 0.5}`;
