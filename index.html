@@ -158,7 +158,8 @@ body .command-line,
 body .command-menu,
 body .toast,
 body .volume-panel,
-body .theme-lab {
+body .settings-panel,
+body .playlist-panel {
   border-color: var(--theme-line);
 }
 
@@ -190,7 +191,8 @@ body .command-menu,
 body .toast,
 body .player,
 body .volume-panel,
-body .theme-lab {
+body .settings-panel,
+body .playlist-panel {
   background:
     linear-gradient(145deg, rgba(255,255,255,0.085), rgba(255,255,255,0.026)),
     var(--theme-panel);
@@ -223,7 +225,8 @@ body.glass-off .command-menu,
 body.glass-off .toast,
 body.glass-off .player,
 body.glass-off .volume-panel,
-body.glass-off .theme-lab {
+body.glass-off .settings-panel,
+body.glass-off .playlist-panel {
   background: var(--theme-panel-strong);
   box-shadow: 0 18px 42px rgba(0,0,0,0.3);
 }
@@ -236,7 +239,8 @@ body.glass-off .command-menu,
 body.glass-off .toast,
 body.glass-off .player,
 body.glass-off .volume-panel,
-body.glass-off .theme-lab {
+body.glass-off .settings-panel,
+body.glass-off .playlist-panel {
   border-color: color-mix(in srgb, var(--theme-line) 68%, transparent);
 }
 
@@ -483,47 +487,149 @@ body.glass-off .cover::after {
   transform: translateX(2px);
 }
 
-.theme-lab {
+.settings-launcher {
   position: fixed;
-  top: 18px;
   right: 18px;
-  width: min(330px, calc(100vw - 36px));
+  bottom: 18px;
+  width: 48px;
+  height: 48px;
   display: grid;
-  gap: 14px;
-  padding: 15px;
+  place-items: center;
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 999px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.025)),
+    var(--theme-panel);
+  color: rgba(255,255,255,0.86);
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.22),
+    0 18px 44px rgba(0,0,0,0.36);
+  backdrop-filter: var(--glass-blur-soft);
+  -webkit-backdrop-filter: var(--glass-blur-soft);
+  z-index: 10;
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.settings-launcher:hover {
+  color: white;
+  transform: translateY(-2px) scale(1.04);
+}
+
+.settings-icon {
+  width: 23px;
+  height: 23px;
+  display: block;
+  fill: currentColor;
+}
+
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgba(0,0,0,0.54);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+  z-index: 30;
+}
+
+.settings-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.settings-panel {
+  width: min(680px, calc(100vw - 32px));
+  min-height: 360px;
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  overflow: hidden;
   border: 1px solid rgba(255,255,255,0.14);
   border-radius: 24px;
   box-shadow:
     inset 0 1px 1px rgba(255,255,255,0.22),
-    0 26px 70px rgba(0,0,0,0.36);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-10px) scale(0.98);
-  transition: opacity 0.18s ease, transform 0.18s ease;
-  z-index: 6;
+    0 28px 90px rgba(0,0,0,0.5);
+  transform: translateY(10px) scale(0.98);
+  transition: transform 0.18s ease;
 }
 
-.theme-lab.open {
-  opacity: 1;
-  pointer-events: auto;
+.settings-overlay.open .settings-panel {
   transform: translateY(0) scale(1);
 }
 
-.theme-lab-head {
+.settings-tabs {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 14px;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.12);
+}
+
+.settings-tab {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  padding: 12px 8px;
+  background: transparent;
+  color: rgba(255,255,255,0.44);
+  cursor: pointer;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.settings-tab svg {
+  width: 21px;
+  height: 21px;
+  display: block;
+  fill: currentColor;
+}
+
+.settings-tab.active,
+.settings-tab:hover {
+  border-color: color-mix(in srgb, var(--theme-accent) 24%, rgba(255,255,255,0.12));
+  background: color-mix(in srgb, var(--theme-accent) 10%, rgba(255,255,255,0.045));
+  color: rgba(255,255,255,0.88);
+}
+
+.settings-content {
+  min-width: 0;
+  padding: 18px;
+}
+
+.settings-pane {
+  display: none;
+}
+
+.settings-pane.active {
+  display: grid;
+  gap: 16px;
+}
+
+.settings-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
 
-.theme-lab-title {
+.settings-title {
   font-size: 12px;
   line-height: 1;
   font-weight: 800;
   color: rgba(255,255,255,0.84);
 }
 
-.theme-lab-state {
+.settings-state {
   margin-top: 5px;
   font-size: 10px;
   line-height: 1;
@@ -531,7 +637,7 @@ body.glass-off .cover::after {
   color: rgba(255,255,255,0.42);
 }
 
-.theme-lab-close {
+.settings-close {
   width: 30px;
   height: 30px;
   display: grid;
@@ -544,6 +650,19 @@ body.glass-off .cover::after {
   cursor: pointer;
   font-size: 18px;
   line-height: 1;
+}
+
+.wip-panel {
+  min-height: 210px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed rgba(255,255,255,0.16);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.035);
+  color: rgba(255,255,255,0.44);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 800;
 }
 
 .theme-swatches {
@@ -1016,6 +1135,13 @@ body.glass-off .cover::after {
     0 14px 30px rgba(0,0,0,0.32);
 }
 
+.cover img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
 .cover::after {
   content: "";
   position: absolute;
@@ -1043,31 +1169,106 @@ body.glass-off .cover::after {
   color: rgba(255,255,255,0.58);
 }
 
-.playlist {
-  position: relative;
+.playlist-panel {
+  position: fixed;
+  left: max(18px, calc(50% - 550px));
+  bottom: 18px;
+  width: min(290px, calc(100vw - 36px));
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 12px;
+  gap: 10px;
+  padding: 13px;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 22px;
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.22),
+    0 24px 62px rgba(0,0,0,0.38);
+  backdrop-filter: var(--glass-blur-soft);
+  -webkit-backdrop-filter: var(--glass-blur-soft);
+  z-index: 4;
+}
+
+.playlist-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 2px;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+  color: rgba(255,255,255,0.78);
+}
+
+.playlist-count {
+  color: rgba(255,255,255,0.36);
+  font-size: 10px;
 }
 
 .playlist-item {
   min-width: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
   appearance: none;
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 13px;
-  padding: 9px 10px;
+  border-radius: 14px;
+  padding: 8px;
   background: rgba(255,255,255,0.045);
   color: rgba(255,255,255,0.58);
   cursor: pointer;
-  font-size: 11px;
-  line-height: 1;
-  font-weight: 800;
+  font-size: 12px;
+  line-height: 1.1;
+  font-weight: 750;
+  font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   text-align: left;
+  transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease, border-color 0.16s ease;
+}
+
+.playlist-cover {
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+}
+
+.playlist-cover img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.playlist-copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.playlist-title,
+.playlist-artist {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease, border-color 0.16s ease;
+}
+
+.playlist-title {
+  color: rgba(255,255,255,0.82);
+}
+
+.playlist-artist {
+  color: rgba(255,255,255,0.38);
+  font-size: 10px;
+}
+
+.playlist-length {
+  align-self: center;
+  color: rgba(255,255,255,0.38);
+  font-size: 10px;
+  font-weight: 800;
 }
 
 .playlist-item:hover,
@@ -1243,23 +1444,32 @@ input[type="range"]::-moz-range-thumb {
     top: 14px;
     width: 280px;
   }
+
+  .playlist-panel {
+    left: 18px;
+    width: 260px;
+  }
 }
 
 @media (max-width: 840px) {
   .side-panel {
     left: 50%;
     top: auto;
-    bottom: 225px;
+    bottom: 315px;
     width: min(500px, calc(100vw - 24px));
     transform: translateX(-50%);
     border-radius: 22px;
   }
 
-  .theme-lab {
-    top: 14px;
-    right: 12px;
-    left: 12px;
-    width: auto;
+  .playlist-panel {
+    left: 50%;
+    bottom: 150px;
+    width: min(500px, calc(100vw - 24px));
+    transform: translateX(-50%);
+  }
+
+  .settings-panel {
+    grid-template-columns: 92px 1fr;
   }
 
   .visualizer {
@@ -1293,7 +1503,32 @@ input[type="range"]::-moz-range-thumb {
   }
 
   .side-panel {
-    bottom: 215px;
+    bottom: 305px;
+  }
+
+  .playlist-panel {
+    bottom: 140px;
+  }
+
+  .settings-overlay {
+    padding: 12px;
+  }
+
+  .settings-panel {
+    width: calc(100vw - 24px);
+    grid-template-columns: 76px 1fr;
+  }
+
+  .settings-tabs {
+    padding: 10px;
+  }
+
+  .settings-content {
+    padding: 14px;
+  }
+
+  .theme-swatches {
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .cover {
@@ -1367,10 +1602,6 @@ input[type="range"]::-moz-range-thumb {
         <span>restart track</span>
         <span>audio</span>
       </button>
-      <button class="command-item" type="button" data-command="themeLab">
-        <span>theme lab</span>
-        <span>style</span>
-      </button>
       <button class="command-item" type="button" data-command="copy">
         <span>copy site</span>
         <span>url</span>
@@ -1408,50 +1639,97 @@ input[type="range"]::-moz-range-thumb {
 
 <div class="toast" id="toast">copied</div>
 
-<aside class="theme-lab" id="themeLab" aria-label="Theme lab">
-  <div class="theme-lab-head">
-    <div>
-      <div class="theme-lab-title">theme lab</div>
-      <div class="theme-lab-state" id="themeLabState">frost glass</div>
-    </div>
-    <button class="theme-lab-close" id="themeLabClose" type="button" aria-label="Close theme lab">x</button>
-  </div>
+<button class="settings-launcher" id="settingsLauncher" type="button" aria-label="Open settings">
+  <svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M19.43 12.98c.04-.32.07-.65.07-.98s-.02-.66-.07-.98l2.11-1.65a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.6-.22l-2.49 1a7.3 7.3 0 0 0-1.7-.98L14.5 2.42A.5.5 0 0 0 14 2h-4a.5.5 0 0 0-.5.42L9.12 5.07c-.61.24-1.18.56-1.7.98l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64l2.11 1.65c-.04.32-.06.65-.06.98s.02.66.06.98l-2.11 1.65a.5.5 0 0 0-.12.64l2 3.46c.13.23.4.33.64.22l2.45-.99c.52.4 1.09.72 1.7.96l.38 2.67c.04.25.25.43.5.43h4c.25 0 .46-.18.5-.43l.38-2.67c.61-.24 1.18-.56 1.7-.96l2.45.99c.24.1.51 0 .64-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.11-1.65ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z"/>
+  </svg>
+</button>
 
-  <div class="theme-swatches" id="themeSwatches" aria-label="Theme choices">
-    <button class="theme-swatch" type="button" data-theme="frost" aria-label="Frost theme">
-      <span class="theme-dot frost" aria-hidden="true"></span>
-      <span>frost</span>
-    </button>
-    <button class="theme-swatch" type="button" data-theme="ember" aria-label="Ember theme">
-      <span class="theme-dot ember" aria-hidden="true"></span>
-      <span>ember</span>
-    </button>
-    <button class="theme-swatch" type="button" data-theme="aqua" aria-label="Aqua theme">
-      <span class="theme-dot aqua" aria-hidden="true"></span>
-      <span>aqua</span>
-    </button>
-    <button class="theme-swatch" type="button" data-theme="violet" aria-label="Violet theme">
-      <span class="theme-dot violet" aria-hidden="true"></span>
-      <span>violet</span>
-    </button>
-    <button class="theme-swatch" type="button" data-theme="graphite" aria-label="Graphite theme">
-      <span class="theme-dot graphite" aria-hidden="true"></span>
-      <span>graphite</span>
-    </button>
-  </div>
+<div class="settings-overlay" id="settingsOverlay" aria-hidden="true">
+  <section class="settings-panel" role="dialog" aria-label="Settings">
+    <nav class="settings-tabs" aria-label="Settings tabs">
+      <button class="settings-tab active" type="button" data-settings-tab="themes" aria-label="Themes">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 16c.9 0 1.7.5 2.1 1.27.23.43.6.73 1.06.73H11a2 2 0 0 0 2-2c0-.55-.22-1.05-.59-1.41l-6-6A2 2 0 0 1 6.4 5.8l1.4-1.4a2 2 0 0 1 2.82 0l6.99 6.99a2 2 0 0 1 0 2.82l-4.4 4.4a4.99 4.99 0 0 1-8.2-2.6H7Zm8.5-11.5 4 4-1.4 1.4-4-4 1.4-1.4Z"/>
+        </svg>
+        <span>Themes</span>
+      </button>
+      <button class="settings-tab" type="button" data-settings-tab="backgrounds" aria-label="Background images">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Zm2 0v9.8l3.2-3.2a1 1 0 0 1 1.4 0l2.4 2.4 4-4V5H6Zm0 14h12v-6.2l-4.3 4.3a1 1 0 0 1-1.4 0L9.9 14.7 6 18.6v.4ZM9 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/>
+        </svg>
+        <span>Backgrounds</span>
+      </button>
+    </nav>
 
-  <div class="lab-toggle-row">
-    <div class="lab-toggle-copy">
-      <span>liquid glass</span>
-      <span>blur and reflection layer</span>
+    <div class="settings-content">
+      <div class="settings-pane active" data-settings-pane="themes">
+        <div class="settings-head">
+          <div>
+            <div class="settings-title">theme lab</div>
+            <div class="settings-state" id="themeLabState">frost glass</div>
+          </div>
+          <button class="settings-close" id="settingsClose" type="button" aria-label="Close settings">x</button>
+        </div>
+
+        <div class="theme-swatches" id="themeSwatches" aria-label="Theme choices">
+          <button class="theme-swatch" type="button" data-theme="frost" aria-label="Frost theme">
+            <span class="theme-dot frost" aria-hidden="true"></span>
+            <span>frost</span>
+          </button>
+          <button class="theme-swatch" type="button" data-theme="ember" aria-label="Ember theme">
+            <span class="theme-dot ember" aria-hidden="true"></span>
+            <span>ember</span>
+          </button>
+          <button class="theme-swatch" type="button" data-theme="aqua" aria-label="Aqua theme">
+            <span class="theme-dot aqua" aria-hidden="true"></span>
+            <span>aqua</span>
+          </button>
+          <button class="theme-swatch" type="button" data-theme="violet" aria-label="Violet theme">
+            <span class="theme-dot violet" aria-hidden="true"></span>
+            <span>violet</span>
+          </button>
+          <button class="theme-swatch" type="button" data-theme="graphite" aria-label="Graphite theme">
+            <span class="theme-dot graphite" aria-hidden="true"></span>
+            <span>graphite</span>
+          </button>
+        </div>
+
+        <div class="lab-toggle-row">
+          <div class="lab-toggle-copy">
+            <span>liquid glass</span>
+            <span>blur and reflection layer</span>
+          </div>
+          <button class="glass-switch active" id="glassSwitch" type="button" aria-label="Toggle liquid glass"></button>
+        </div>
+      </div>
+
+      <div class="settings-pane" data-settings-pane="backgrounds">
+        <div class="settings-head">
+          <div>
+            <div class="settings-title">background images</div>
+            <div class="settings-state">work in progress</div>
+          </div>
+          <button class="settings-close" id="settingsCloseAlt" type="button" aria-label="Close settings">x</button>
+        </div>
+        <div class="wip-panel">background image controls coming soon</div>
+      </div>
     </div>
-    <button class="glass-switch active" id="glassSwitch" type="button" aria-label="Toggle liquid glass"></button>
+  </section>
+</div>
+
+<aside class="playlist-panel" aria-label="Playlist">
+  <div class="playlist-head">
+    <span>playlist</span>
+    <span class="playlist-count">2 tracks</span>
   </div>
+  <div class="playlist" id="playlist"></div>
 </aside>
 
 <aside class="player" aria-label="Music player">
   <div class="track-head">
     <div class="cover" aria-hidden="true">
+      <img id="coverImage" src="Randomly.jpg" alt="">
     </div>
     <div class="track-copy">
       <div class="song-title" id="songTitle">Randomly</div>
@@ -1460,11 +1738,6 @@ input[type="range"]::-moz-range-thumb {
   </div>
 
   <audio id="audio" src="Randomly.mp3" loop></audio>
-
-  <div class="playlist" aria-label="Playlist">
-    <button class="playlist-item active" type="button" data-track="0">Randomly</button>
-    <button class="playlist-item" type="button" data-track="1">Alternative Outro</button>
-  </div>
 
   <div class="controls-row">
     <button class="control-btn" id="playBtn" type="button" onclick="togglePlay()" aria-label="Play">
@@ -1523,8 +1796,11 @@ const visualizerGap = 6;
 const commandWrap = document.getElementById("commandWrap");
 const commandLine = document.getElementById("commandLine");
 const commandItems = document.querySelectorAll(".command-item");
-const themeLab = document.getElementById("themeLab");
-const themeLabClose = document.getElementById("themeLabClose");
+const settingsLauncher = document.getElementById("settingsLauncher");
+const settingsOverlay = document.getElementById("settingsOverlay");
+const settingsCloseButtons = document.querySelectorAll(".settings-close");
+const settingsTabs = document.querySelectorAll(".settings-tab");
+const settingsPanes = document.querySelectorAll(".settings-pane");
 const themeLabState = document.getElementById("themeLabState");
 const themeSwatches = document.querySelectorAll(".theme-swatch");
 const glassSwitch = document.getElementById("glassSwitch");
@@ -1533,7 +1809,9 @@ const socialLinks = document.querySelectorAll(".social-link[data-copy]");
 const socials = document.querySelector(".socials");
 const songTitle = document.getElementById("songTitle");
 const songArtist = document.getElementById("songArtist");
-const playlistItems = document.querySelectorAll(".playlist-item");
+const coverImage = document.getElementById("coverImage");
+const playlist = document.getElementById("playlist");
+let playlistItems = [];
 
 let isSeeking = false;
 let fadeFrame = null;
@@ -1550,12 +1828,16 @@ const tracks = [
   {
     title: "Randomly",
     artist: "LUCKI",
-    src: "Randomly.mp3"
+    src: "Randomly.mp3",
+    cover: "Randomly.jpg",
+    duration: "--:--"
   },
   {
     title: "Alternative Outro",
     artist: "LUCKI",
-    src: "Alternative Outro.mp3"
+    src: "Alternative Outro.mp3",
+    cover: "Alternative Outro.jpg",
+    duration: "--:--"
   }
 ];
 let activeTheme = readSetting("axxtren-theme", "frost");
@@ -1622,18 +1904,78 @@ function toggleGlass() {
   showToast(glassEnabled ? "glass on" : "glass off");
 }
 
-function setThemeLabOpen(isOpen) {
-  themeLab.classList.toggle("open", isOpen);
+function setSettingsOpen(isOpen) {
+  settingsOverlay.classList.toggle("open", isOpen);
+  settingsOverlay.setAttribute("aria-hidden", isOpen ? "false" : "true");
+}
+
+function setSettingsTab(tabName) {
+  settingsTabs.forEach((tab) => {
+    tab.classList.toggle("active", tab.dataset.settingsTab === tabName);
+  });
+
+  settingsPanes.forEach((pane) => {
+    pane.classList.toggle("active", pane.dataset.settingsPane === tabName);
+  });
+}
+
+function renderPlaylist() {
+  playlist.innerHTML = tracks.map((track, index) => `
+    <button class="playlist-item" type="button" data-track="${index}">
+      <span class="playlist-cover">
+        <img src="${track.cover}" alt="">
+      </span>
+      <span class="playlist-copy">
+        <span class="playlist-title">${track.title}</span>
+        <span class="playlist-artist">${track.artist}</span>
+      </span>
+      <span class="playlist-length">${track.duration}</span>
+    </button>
+  `).join("");
+
+  playlistItems = Array.from(document.querySelectorAll(".playlist-item"));
+  playlistItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      selectTrack(Number(item.dataset.track));
+    });
+  });
+
+  updateTrackDisplay();
+}
+
+function updatePlaylistDurations() {
+  playlistItems.forEach((item) => {
+    const index = Number(item.dataset.track);
+    const duration = item.querySelector(".playlist-length");
+    if (duration) {
+      duration.textContent = tracks[index].duration;
+    }
+  });
 }
 
 function updateTrackDisplay() {
   const track = tracks[activeTrackIndex];
   songTitle.textContent = track.title;
   songArtist.textContent = track.artist;
+  coverImage.src = track.cover;
   terminalTrack.textContent = `${track.title} - ${track.artist}`;
 
   playlistItems.forEach((item) => {
     item.classList.toggle("active", Number(item.dataset.track) === activeTrackIndex);
+  });
+}
+
+function loadPlaylistDurations() {
+  tracks.forEach((track, index) => {
+    const probe = new Audio();
+    probe.preload = "metadata";
+    probe.src = track.src;
+    probe.addEventListener("loadedmetadata", () => {
+      if (Number.isFinite(probe.duration)) {
+        tracks[index].duration = formatTime(probe.duration);
+        updatePlaylistDurations();
+      }
+    });
   });
 }
 
@@ -1826,7 +2168,8 @@ function pauseWithFade() {
 applyTheme();
 audio.src = tracks[activeTrackIndex].src;
 audio.volume = targetVolume();
-updateTrackDisplay();
+renderPlaylist();
+loadPlaylistDurations();
 updateLockTime();
 updateVolumeLabel();
 updatePlayerDisplay(0);
@@ -1834,7 +2177,14 @@ setInterval(updateLockTime, 1000);
 
 audio.addEventListener("play", () => setPlayIcon(true));
 audio.addEventListener("pause", () => setPlayIcon(false));
-audio.addEventListener("loadedmetadata", () => updatePlayerDisplay(audio.currentTime));
+audio.addEventListener("loadedmetadata", () => {
+  if (Number.isFinite(audio.duration)) {
+    tracks[activeTrackIndex].duration = formatTime(audio.duration);
+    updatePlaylistDurations();
+  }
+
+  updatePlayerDisplay(audio.currentTime);
+});
 audio.addEventListener("timeupdate", () => {
   if (!isSeeking) {
     updatePlayerDisplay(audio.currentTime);
@@ -1867,12 +2217,22 @@ themeSwatches.forEach((button) => {
 });
 
 glassSwitch.addEventListener("click", toggleGlass);
-themeLabClose.addEventListener("click", () => setThemeLabOpen(false));
+settingsLauncher.addEventListener("click", () => setSettingsOpen(true));
 
-playlistItems.forEach((item) => {
-  item.addEventListener("click", () => {
-    selectTrack(Number(item.dataset.track));
+settingsCloseButtons.forEach((button) => {
+  button.addEventListener("click", () => setSettingsOpen(false));
+});
+
+settingsTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    setSettingsTab(tab.dataset.settingsTab);
   });
+});
+
+settingsOverlay.addEventListener("click", (event) => {
+  if (event.target === settingsOverlay) {
+    setSettingsOpen(false);
+  }
 });
 
 function runBootSequence() {
@@ -1928,10 +2288,6 @@ commandItems.forEach((item) => {
 
     if (command === "restart") {
       restart();
-    }
-
-    if (command === "themeLab") {
-      setThemeLabOpen(true);
     }
 
     if (command === "copy") {
