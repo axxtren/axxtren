@@ -166,9 +166,7 @@ body::after {
 
 .visualizer {
   height: 134px;
-  display: flex;
-  align-items: end;
-  gap: 6px;
+  position: relative;
   padding: 16px 6px 4px;
   filter: drop-shadow(0 0 16px rgba(255,255,255,0.08));
   transition: filter 0.2s ease;
@@ -180,29 +178,10 @@ body::after {
     drop-shadow(0 0 26px rgba(255,255,255,0.08));
 }
 
-.bar {
-  --bar-height: 18px;
-  flex: 1;
-  min-width: 5px;
+.visualizer-canvas {
+  width: 100%;
   height: 124px;
-  position: relative;
-  opacity: 0.75;
-  transition: opacity 0.18s ease;
-  will-change: opacity;
-}
-
-.bar::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: var(--bar-height);
-  border-radius: 999px;
-  background:
-    linear-gradient(to top, rgba(255,255,255,0.13), rgba(255,255,255,0.64)),
-    rgba(255,255,255,0.12);
-  box-shadow: 0 10px 26px rgba(0,0,0,0.24);
+  display: block;
 }
 
 .command-wrap {
@@ -860,6 +839,10 @@ input[type="range"]::-moz-range-thumb {
     height: 70px;
     padding-top: 10px;
   }
+
+  .visualizer-canvas {
+    height: 60px;
+  }
 }
 
 @media (max-width: 520px) {
@@ -927,20 +910,7 @@ input[type="range"]::-moz-range-thumb {
   </div>
 
   <div class="visualizer" id="visualizer" aria-label="Audio visualizer">
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
+    <canvas class="visualizer-canvas" id="visualizerCanvas" width="308" height="124"></canvas>
   </div>
 
   <div class="command-wrap" id="commandWrap">
@@ -1063,9 +1033,10 @@ const terminalState = document.getElementById("terminalState");
 const lockTime = document.getElementById("lockTime");
 const lockDate = document.getElementById("lockDate");
 const visualizer = document.getElementById("visualizer");
-const visualizerBars = document.querySelectorAll(".bar");
-const visualizerBarCount = visualizerBars.length;
-const visualizerFrameMs = 1000 / 30;
+const visualizerCanvas = document.getElementById("visualizerCanvas");
+const visualizerCtx = visualizerCanvas.getContext("2d", { alpha: true });
+const visualizerBarCount = 14;
+const visualizerGap = 6;
 const commandWrap = document.getElementById("commandWrap");
 const commandLine = document.getElementById("commandLine");
 const commandItems = document.querySelectorAll(".command-item");
@@ -1081,7 +1052,7 @@ let analyser = null;
 let source = null;
 let visualizerData = null;
 let idleVisualFrame = 0;
-let lastVisualizerUpdate = 0;
+let lastDisplayTime = "";
 let toastTimer = null;
 
 function formatTime(seconds) {
@@ -1178,7 +1149,7 @@ function fadeAudio(toVolume, duration = fadeMs, afterFade) {
   fadeFrame = requestAnimationFrame(step);
 }
 
-function updatePlayer() {
+function updatePlayerDisplay(displaySeconds = audio.currentTime) {
   if (Number.isFinite(audio.duration)) {
     seek.max = audio.duration;
 
@@ -1186,11 +1157,12 @@ function updatePlayer() {
       seek.value = audio.currentTime;
     }
 
-    const displayTime = isSeeking ? Number(seek.value) : audio.currentTime;
-    time.textContent = `${formatTime(displayTime)} / ${formatTime(audio.duration)}`;
+    const displayText = `${formatTime(displaySeconds)} / ${formatTime(audio.duration)}`;
+    if (displayText !== lastDisplayTime) {
+      time.textContent = displayText;
+      lastDisplayTime = displayText;
+    }
   }
-
-  requestAnimationFrame(updatePlayer);
 }
 
 function togglePlay() {
@@ -1240,19 +1212,27 @@ function pauseWithFade() {
 audio.volume = targetVolume();
 updateLockTime();
 updateVolumeLabel();
-updatePlayer();
+updatePlayerDisplay(0);
 setInterval(updateLockTime, 1000);
 
 audio.addEventListener("play", () => setPlayIcon(true));
 audio.addEventListener("pause", () => setPlayIcon(false));
+audio.addEventListener("loadedmetadata", () => updatePlayerDisplay(audio.currentTime));
+audio.addEventListener("timeupdate", () => {
+  if (!isSeeking) {
+    updatePlayerDisplay(audio.currentTime);
+  }
+});
 
 seek.addEventListener("input", () => {
   isSeeking = true;
+  updatePlayerDisplay(Number(seek.value));
 });
 
 seek.addEventListener("change", () => {
   audio.currentTime = Number(seek.value);
   isSeeking = false;
+  updatePlayerDisplay(audio.currentTime);
 });
 
 volume.addEventListener("input", () => {
@@ -1351,23 +1331,70 @@ function setupVisualizer() {
   visualizerData = new Uint8Array(analyser.frequencyBinCount);
 }
 
-function setVisualizerBar(bar, height, opacity) {
-  bar.style.setProperty("--bar-height", `${height}px`);
-  bar.style.opacity = opacity;
-}
+function resizeVisualizerCanvas() {
+  const width = Math.max(1, Math.round(visualizerCanvas.clientWidth));
+  const height = Math.max(1, Math.round(visualizerCanvas.clientHeight));
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  const pixelWidth = Math.round(width * ratio);
+  const pixelHeight = Math.round(height * ratio);
 
-function animateVisualizer(now = 0) {
-  if (now - lastVisualizerUpdate < visualizerFrameMs) {
-    requestAnimationFrame(animateVisualizer);
-    return;
+  if (visualizerCanvas.width !== pixelWidth || visualizerCanvas.height !== pixelHeight) {
+    visualizerCanvas.width = pixelWidth;
+    visualizerCanvas.height = pixelHeight;
   }
 
-  lastVisualizerUpdate = now;
+  visualizerCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  return { width, height };
+}
+
+function roundedRectPath(context, x, y, width, height, radius) {
+  const safeRadius = Math.min(radius, width / 2, height / 2);
+  context.beginPath();
+  context.moveTo(x + safeRadius, y);
+  context.lineTo(x + width - safeRadius, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
+  context.lineTo(x + width, y + height - safeRadius);
+  context.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height);
+  context.lineTo(x + safeRadius, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
+  context.lineTo(x, y + safeRadius);
+  context.quadraticCurveTo(x, y, x + safeRadius, y);
+  context.closePath();
+}
+
+function drawVisualizerBar(x, y, width, height, opacity) {
+  visualizerCtx.save();
+  visualizerCtx.globalAlpha = opacity;
+  visualizerCtx.shadowColor = "rgba(0,0,0,0.24)";
+  visualizerCtx.shadowBlur = 26;
+  visualizerCtx.shadowOffsetY = 10;
+
+  const gradient = visualizerCtx.createLinearGradient(0, y + height, 0, y);
+  gradient.addColorStop(0, "rgba(255,255,255,0.13)");
+  gradient.addColorStop(1, "rgba(255,255,255,0.64)");
+
+  visualizerCtx.fillStyle = "rgba(255,255,255,0.12)";
+  roundedRectPath(visualizerCtx, x, y, width, height, width / 2);
+  visualizerCtx.fill();
+
+  visualizerCtx.fillStyle = gradient;
+  roundedRectPath(visualizerCtx, x, y, width, height, width / 2);
+  visualizerCtx.fill();
+  visualizerCtx.restore();
+}
+
+function animateVisualizer() {
+  const canvasSize = resizeVisualizerCanvas();
+  const availableWidth = canvasSize.width;
+  const availableHeight = canvasSize.height;
+  const barWidth = Math.max(5, (availableWidth - visualizerGap * (visualizerBarCount - 1)) / visualizerBarCount);
+
+  visualizerCtx.clearRect(0, 0, availableWidth, availableHeight);
 
   if (analyser && visualizerData && !audio.paused) {
     analyser.getByteFrequencyData(visualizerData);
 
-    visualizerBars.forEach((bar, index) => {
+    for (let index = 0; index < visualizerBarCount; index++) {
       const start = Math.floor(index * visualizerData.length * 0.64 / visualizerBarCount);
       const end = Math.max(start + 1, Math.floor((index + 1) * visualizerData.length * 0.64 / visualizerBarCount));
       let total = 0;
@@ -1378,17 +1405,21 @@ function animateVisualizer(now = 0) {
 
       const mirroredEnergy = visualizerData[Math.max(0, visualizerData.length - index - 8)] || 0;
       const value = Math.max(total / ((end - start + 1) * 255), mirroredEnergy / 420);
-      const height = 16 + value * 108;
-      setVisualizerBar(bar, height, `${0.45 + value * 0.5}`);
-    });
+      const height = Math.min(availableHeight, 16 + value * (availableHeight - 16));
+      const x = index * (barWidth + visualizerGap);
+      const y = availableHeight - height;
+      drawVisualizerBar(x, y, barWidth, height, 0.45 + value * 0.5);
+    }
   } else {
-    idleVisualFrame += 0.07;
+    idleVisualFrame += 0.035;
 
-    visualizerBars.forEach((bar, index) => {
+    for (let index = 0; index < visualizerBarCount; index++) {
       const wave = Math.sin(idleVisualFrame + index * 0.72);
-      const height = 18 + (wave + 1) * 13;
-      setVisualizerBar(bar, height, "0.42");
-    });
+      const height = Math.min(availableHeight, 18 + (wave + 1) * 13);
+      const x = index * (barWidth + visualizerGap);
+      const y = availableHeight - height;
+      drawVisualizerBar(x, y, barWidth, height, 0.42);
+    }
   }
 
   requestAnimationFrame(animateVisualizer);
