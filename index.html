@@ -13,6 +13,19 @@
   --glass: rgba(255, 255, 255, 0.105);
   --glass-strong: rgba(255, 255, 255, 0.18);
   --shadow: rgba(0, 0, 0, 0.36);
+  --theme-bg: #050507;
+  --theme-tint: rgba(255,255,255,0.055);
+  --theme-deep: rgba(0,0,0,0.34);
+  --theme-vignette: rgba(0,0,0,0.58);
+  --theme-panel: rgba(8,8,12,0.28);
+  --theme-panel-strong: rgba(8,8,12,0.5);
+  --theme-line: rgba(255,255,255,0.14);
+  --theme-glow: rgba(255,255,255,0.12);
+  --theme-accent: rgba(136,255,174,0.82);
+  --theme-status: #38f26d;
+  --glass-blur: blur(26px) saturate(1.45);
+  --glass-blur-soft: blur(20px) saturate(1.35);
+  --glass-opacity: 1;
 }
 
 * {
@@ -33,7 +46,7 @@ body {
   place-items: center;
   overflow: hidden;
   color: var(--white);
-  background: #050507;
+  background: var(--theme-bg);
   opacity: 0;
   animation: pageFadeIn 720ms ease forwards;
 }
@@ -43,7 +56,7 @@ body::before {
   position: fixed;
   inset: -18px;
   background:
-    linear-gradient(135deg, rgba(255,255,255,0.055), transparent 34%, rgba(0,0,0,0.34)),
+    linear-gradient(135deg, var(--theme-tint), transparent 34%, var(--theme-deep)),
     url("a.png") center/cover no-repeat;
   filter: blur(2px) saturate(1.18) contrast(1.08);
   transform: scale(1.04);
@@ -55,9 +68,149 @@ body::after {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at 50% 42%, transparent 0 18%, rgba(0,0,0,0.12) 43%, rgba(0,0,0,0.58) 100%),
+    radial-gradient(circle at 50% 42%, transparent 0 18%, rgba(0,0,0,0.12) 43%, var(--theme-vignette) 100%),
     linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.42));
   z-index: -2;
+}
+
+body.theme-frost {
+  --theme-bg: #050507;
+  --theme-tint: rgba(255,255,255,0.06);
+  --theme-deep: rgba(0,0,0,0.34);
+  --theme-vignette: rgba(0,0,0,0.58);
+  --theme-panel: rgba(8,8,12,0.28);
+  --theme-panel-strong: rgba(8,8,12,0.5);
+  --theme-line: rgba(255,255,255,0.14);
+  --theme-glow: rgba(255,255,255,0.12);
+  --theme-accent: rgba(136,255,174,0.82);
+  --theme-status: #38f26d;
+}
+
+body.theme-ember {
+  --theme-bg: #100706;
+  --theme-tint: rgba(255,95,70,0.13);
+  --theme-deep: rgba(36,6,4,0.42);
+  --theme-vignette: rgba(18,4,3,0.68);
+  --theme-panel: rgba(24,8,7,0.34);
+  --theme-panel-strong: rgba(34,10,8,0.56);
+  --theme-line: rgba(255,186,162,0.18);
+  --theme-glow: rgba(255,118,84,0.18);
+  --theme-accent: rgba(255,176,120,0.9);
+  --theme-status: #ff9a62;
+}
+
+body.theme-aqua {
+  --theme-bg: #031011;
+  --theme-tint: rgba(70,235,225,0.12);
+  --theme-deep: rgba(2,23,27,0.46);
+  --theme-vignette: rgba(2,13,16,0.66);
+  --theme-panel: rgba(4,21,24,0.34);
+  --theme-panel-strong: rgba(4,28,33,0.56);
+  --theme-line: rgba(156,255,246,0.18);
+  --theme-glow: rgba(80,240,230,0.16);
+  --theme-accent: rgba(126,255,237,0.9);
+  --theme-status: #5ff4df;
+}
+
+body.theme-violet {
+  --theme-bg: #090814;
+  --theme-tint: rgba(170,130,255,0.13);
+  --theme-deep: rgba(15,8,34,0.45);
+  --theme-vignette: rgba(7,6,18,0.66);
+  --theme-panel: rgba(14,12,30,0.34);
+  --theme-panel-strong: rgba(20,16,42,0.56);
+  --theme-line: rgba(207,190,255,0.18);
+  --theme-glow: rgba(168,130,255,0.17);
+  --theme-accent: rgba(207,190,255,0.9);
+  --theme-status: #b79cff;
+}
+
+body.theme-graphite {
+  --theme-bg: #060708;
+  --theme-tint: rgba(210,224,230,0.07);
+  --theme-deep: rgba(0,0,0,0.46);
+  --theme-vignette: rgba(0,0,0,0.72);
+  --theme-panel: rgba(12,14,15,0.38);
+  --theme-panel-strong: rgba(12,14,15,0.62);
+  --theme-line: rgba(232,242,246,0.16);
+  --theme-glow: rgba(220,235,240,0.11);
+  --theme-accent: rgba(226,236,238,0.86);
+  --theme-status: #d7e2e5;
+}
+
+body.glass-off {
+  --glass-blur: none;
+  --glass-blur-soft: none;
+  --glass-opacity: 0.78;
+}
+
+body .side-panel,
+body .socials,
+body .player,
+body .command-line,
+body .command-menu,
+body .toast,
+body .volume-panel {
+  border-color: var(--theme-line);
+}
+
+body .side-panel {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.09), rgba(255,255,255,0.025) 44%, var(--theme-glow)),
+    var(--theme-panel);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+body .identity::before {
+  border-color: var(--theme-line);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.11), rgba(255,255,255,0.028) 42%, var(--theme-glow)),
+    radial-gradient(ellipse at 35% 0%, rgba(255,255,255,0.13), transparent 44%),
+    var(--theme-panel);
+  backdrop-filter: var(--glass-blur-soft);
+  -webkit-backdrop-filter: var(--glass-blur-soft);
+}
+
+body .socials,
+body .command-line,
+body .command-menu,
+body .toast,
+body .player,
+body .volume-panel {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.085), rgba(255,255,255,0.026)),
+    var(--theme-panel);
+  backdrop-filter: var(--glass-blur-soft);
+  -webkit-backdrop-filter: var(--glass-blur-soft);
+}
+
+body .command-menu,
+body .toast,
+body .volume-panel {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.11), rgba(255,255,255,0.028)),
+    var(--theme-panel-strong);
+}
+
+body .terminal-state.playing {
+  color: var(--theme-accent);
+}
+
+body .status-dot {
+  background: var(--theme-status);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--theme-status) 65%, transparent);
+}
+
+body.glass-off .side-panel,
+body.glass-off .identity::before,
+body.glass-off .socials,
+body.glass-off .command-line,
+body.glass-off .command-menu,
+body.glass-off .toast,
+body.glass-off .player,
+body.glass-off .volume-panel {
+  box-shadow: 0 18px 42px rgba(0,0,0,0.3);
 }
 
 .side-panel {
@@ -358,12 +511,12 @@ body::after {
   0%,
   100% {
     opacity: 0.62;
-    text-shadow: 0 0 0 rgba(136,255,174,0);
+    text-shadow: 0 0 0 color-mix(in srgb, var(--theme-accent) 0%, transparent);
   }
 
   50% {
     opacity: 1;
-    text-shadow: 0 0 12px rgba(136,255,174,0.32);
+    text-shadow: 0 0 12px color-mix(in srgb, var(--theme-accent) 32%, transparent);
   }
 }
 
@@ -371,12 +524,12 @@ body::after {
   0%,
   100% {
     transform: scale(0.9);
-    box-shadow: 0 0 8px rgba(56,242,109,0.42);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--theme-status) 42%, transparent);
   }
 
   50% {
     transform: scale(1.15);
-    box-shadow: 0 0 16px rgba(56,242,109,0.75);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--theme-status) 75%, transparent);
   }
 }
 
@@ -903,6 +1056,10 @@ input[type="range"]::-moz-range-thumb {
         <span class="terminal-value" id="terminalVolume">15%</span>
       </div>
       <div class="terminal-line">
+        <span class="terminal-key">theme</span>
+        <span class="terminal-value" id="terminalTheme">frost glass</span>
+      </div>
+      <div class="terminal-line">
         <span class="terminal-key">session</span>
         <span class="terminal-value">synced</span>
       </div>
@@ -935,6 +1092,14 @@ input[type="range"]::-moz-range-thumb {
       <button class="command-item" type="button" data-command="restart">
         <span>restart track</span>
         <span>audio</span>
+      </button>
+      <button class="command-item" type="button" data-command="theme">
+        <span>change theme</span>
+        <span id="themeCommandLabel">frost</span>
+      </button>
+      <button class="command-item" type="button" data-command="glass">
+        <span>toggle glass</span>
+        <span id="glassCommandLabel">on</span>
       </button>
       <button class="command-item" type="button" data-command="copy">
         <span>copy site</span>
@@ -1030,6 +1195,7 @@ const terminal = document.getElementById("terminal");
 const bootLine = document.getElementById("bootLine");
 const terminalVolume = document.getElementById("terminalVolume");
 const terminalState = document.getElementById("terminalState");
+const terminalTheme = document.getElementById("terminalTheme");
 const lockTime = document.getElementById("lockTime");
 const lockDate = document.getElementById("lockDate");
 const visualizer = document.getElementById("visualizer");
@@ -1040,6 +1206,8 @@ const visualizerGap = 6;
 const commandWrap = document.getElementById("commandWrap");
 const commandLine = document.getElementById("commandLine");
 const commandItems = document.querySelectorAll(".command-item");
+const themeCommandLabel = document.getElementById("themeCommandLabel");
+const glassCommandLabel = document.getElementById("glassCommandLabel");
 const toast = document.getElementById("toast");
 const socialLinks = document.querySelectorAll(".social-link[data-copy]");
 const socials = document.querySelector(".socials");
@@ -1054,6 +1222,55 @@ let visualizerData = null;
 let idleVisualFrame = 0;
 let lastDisplayTime = "";
 let toastTimer = null;
+const themes = ["frost", "ember", "aqua", "violet", "graphite"];
+let activeTheme = readSetting("axxtren-theme", "frost");
+let glassEnabled = readSetting("axxtren-glass", "on") !== "off";
+
+function readSetting(key, fallback) {
+  try {
+    return localStorage.getItem(key) || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeSetting(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    return;
+  }
+}
+
+function applyTheme() {
+  if (!themes.includes(activeTheme)) {
+    activeTheme = "frost";
+  }
+
+  document.body.classList.remove(...themes.map((theme) => `theme-${theme}`));
+  document.body.classList.add(`theme-${activeTheme}`);
+  document.body.classList.toggle("glass-off", !glassEnabled);
+
+  const glassText = glassEnabled ? "glass" : "solid";
+  terminalTheme.textContent = `${activeTheme} ${glassText}`;
+  themeCommandLabel.textContent = activeTheme;
+  glassCommandLabel.textContent = glassEnabled ? "on" : "off";
+}
+
+function cycleTheme() {
+  const nextIndex = (themes.indexOf(activeTheme) + 1) % themes.length;
+  activeTheme = themes[nextIndex];
+  writeSetting("axxtren-theme", activeTheme);
+  applyTheme();
+  showToast(`theme: ${activeTheme}`);
+}
+
+function toggleGlass() {
+  glassEnabled = !glassEnabled;
+  writeSetting("axxtren-glass", glassEnabled ? "on" : "off");
+  applyTheme();
+  showToast(glassEnabled ? "glass on" : "glass off");
+}
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds)) return "0:00";
@@ -1209,6 +1426,7 @@ function pauseWithFade() {
   });
 }
 
+applyTheme();
 audio.volume = targetVolume();
 updateLockTime();
 updateVolumeLabel();
@@ -1296,6 +1514,14 @@ commandItems.forEach((item) => {
 
     if (command === "restart") {
       restart();
+    }
+
+    if (command === "theme") {
+      cycleTheme();
+    }
+
+    if (command === "glass") {
+      toggleGlass();
     }
 
     if (command === "copy") {
