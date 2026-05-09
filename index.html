@@ -19,6 +19,7 @@
   --theme-vignette: rgba(0,0,0,0.58);
   --theme-panel: rgba(8,8,12,0.28);
   --theme-panel-strong: rgba(8,8,12,0.5);
+  --theme-panel-soft: rgba(20,20,26,0.42);
   --theme-line: rgba(255,255,255,0.14);
   --theme-glow: rgba(255,255,255,0.12);
   --theme-accent: rgba(136,255,174,0.82);
@@ -80,6 +81,7 @@ body.theme-frost {
   --theme-vignette: rgba(0,0,0,0.58);
   --theme-panel: rgba(8,8,12,0.28);
   --theme-panel-strong: rgba(8,8,12,0.5);
+  --theme-panel-soft: rgba(22,22,28,0.42);
   --theme-line: rgba(255,255,255,0.14);
   --theme-glow: rgba(255,255,255,0.12);
   --theme-accent: rgba(136,255,174,0.82);
@@ -93,6 +95,7 @@ body.theme-ember {
   --theme-vignette: rgba(18,4,3,0.68);
   --theme-panel: rgba(24,8,7,0.34);
   --theme-panel-strong: rgba(34,10,8,0.56);
+  --theme-panel-soft: rgba(48,18,14,0.42);
   --theme-line: rgba(255,186,162,0.18);
   --theme-glow: rgba(255,118,84,0.18);
   --theme-accent: rgba(255,176,120,0.9);
@@ -106,6 +109,7 @@ body.theme-aqua {
   --theme-vignette: rgba(2,13,16,0.66);
   --theme-panel: rgba(4,21,24,0.34);
   --theme-panel-strong: rgba(4,28,33,0.56);
+  --theme-panel-soft: rgba(10,43,47,0.42);
   --theme-line: rgba(156,255,246,0.18);
   --theme-glow: rgba(80,240,230,0.16);
   --theme-accent: rgba(126,255,237,0.9);
@@ -119,6 +123,7 @@ body.theme-violet {
   --theme-vignette: rgba(7,6,18,0.66);
   --theme-panel: rgba(14,12,30,0.34);
   --theme-panel-strong: rgba(20,16,42,0.56);
+  --theme-panel-soft: rgba(30,25,56,0.42);
   --theme-line: rgba(207,190,255,0.18);
   --theme-glow: rgba(168,130,255,0.17);
   --theme-accent: rgba(207,190,255,0.9);
@@ -132,9 +137,11 @@ body.theme-graphite {
   --theme-vignette: rgba(0,0,0,0.72);
   --theme-panel: rgba(12,14,15,0.38);
   --theme-panel-strong: rgba(12,14,15,0.62);
+  --theme-panel-soft: rgba(28,31,33,0.44);
   --theme-line: rgba(232,242,246,0.16);
   --theme-glow: rgba(220,235,240,0.11);
   --theme-accent: rgba(226,236,238,0.86);
+  --theme-play: rgba(136,255,174,0.82);
   --theme-status: #38f26d;
 }
 
@@ -150,8 +157,13 @@ body .player,
 body .command-line,
 body .command-menu,
 body .toast,
-body .volume-panel {
+body .volume-panel,
+body .theme-lab {
   border-color: var(--theme-line);
+}
+
+body.theme-graphite .terminal-state.playing {
+  color: var(--theme-play);
 }
 
 body .side-panel {
@@ -177,7 +189,8 @@ body .command-line,
 body .command-menu,
 body .toast,
 body .player,
-body .volume-panel {
+body .volume-panel,
+body .theme-lab {
   background:
     linear-gradient(145deg, rgba(255,255,255,0.085), rgba(255,255,255,0.026)),
     var(--theme-panel);
@@ -209,7 +222,8 @@ body.glass-off .command-line,
 body.glass-off .command-menu,
 body.glass-off .toast,
 body.glass-off .player,
-body.glass-off .volume-panel {
+body.glass-off .volume-panel,
+body.glass-off .theme-lab {
   background: var(--theme-panel-strong);
   box-shadow: 0 18px 42px rgba(0,0,0,0.3);
 }
@@ -221,12 +235,17 @@ body.glass-off .command-line,
 body.glass-off .command-menu,
 body.glass-off .toast,
 body.glass-off .player,
-body.glass-off .volume-panel {
+body.glass-off .volume-panel,
+body.glass-off .theme-lab {
   border-color: color-mix(in srgb, var(--theme-line) 68%, transparent);
 }
 
 body.glass-off .identity::before {
-  background: var(--theme-panel);
+  background: var(--theme-panel-soft);
+}
+
+body.glass-off .socials {
+  background: var(--theme-panel-soft);
 }
 
 body.glass-off .player::before,
@@ -464,6 +483,196 @@ body.glass-off .cover::after {
   transform: translateX(2px);
 }
 
+.theme-lab {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  width: min(330px, calc(100vw - 36px));
+  display: grid;
+  gap: 14px;
+  padding: 15px;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 24px;
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.22),
+    0 26px 70px rgba(0,0,0,0.36);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px) scale(0.98);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 6;
+}
+
+.theme-lab.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.theme-lab-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.theme-lab-title {
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 800;
+  color: rgba(255,255,255,0.84);
+}
+
+.theme-lab-state {
+  margin-top: 5px;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 750;
+  color: rgba(255,255,255,0.42);
+}
+
+.theme-lab-close {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.055);
+  color: rgba(255,255,255,0.72);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.theme-swatches {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.theme-swatch {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,0.46);
+  cursor: pointer;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.theme-dot {
+  width: 38px;
+  height: 38px;
+  display: block;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.28),
+    0 10px 24px rgba(0,0,0,0.26);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.theme-swatch:hover .theme-dot,
+.theme-swatch.active .theme-dot {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.34),
+    0 0 0 2px color-mix(in srgb, var(--theme-accent) 44%, transparent),
+    0 14px 28px rgba(0,0,0,0.3);
+}
+
+.theme-swatch.active {
+  color: rgba(255,255,255,0.88);
+}
+
+.theme-dot.frost {
+  background: linear-gradient(135deg, #f7fbff, #74777d 52%, #15161b);
+}
+
+.theme-dot.ember {
+  background: linear-gradient(135deg, #ffceaa, #ff7654 48%, #180807);
+}
+
+.theme-dot.aqua {
+  background: linear-gradient(135deg, #bcfff7, #39d8cc 48%, #041518);
+}
+
+.theme-dot.violet {
+  background: linear-gradient(135deg, #eee8ff, #9d7cff 48%, #0e0c1e);
+}
+
+.theme-dot.graphite {
+  background: linear-gradient(135deg, #f2fbff, #575f63 48%, #070809);
+}
+
+.lab-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 2px;
+}
+
+.lab-toggle-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.lab-toggle-copy span:first-child {
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 800;
+  color: rgba(255,255,255,0.78);
+}
+
+.lab-toggle-copy span:last-child {
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 700;
+  color: rgba(255,255,255,0.36);
+}
+
+.glass-switch {
+  width: 52px;
+  height: 30px;
+  flex: 0 0 auto;
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  cursor: pointer;
+  position: relative;
+}
+
+.glass-switch::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.86);
+  box-shadow: 0 7px 16px rgba(0,0,0,0.28);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.glass-switch.active {
+  background: color-mix(in srgb, var(--theme-accent) 28%, rgba(255,255,255,0.08));
+}
+
+.glass-switch.active::before {
+  transform: translateX(22px);
+  background: white;
+}
+
 .status-line {
   position: fixed;
   left: 22px;
@@ -647,19 +856,18 @@ body.glass-off .cover::after {
   -webkit-background-clip: text;
   font-variant-numeric: tabular-nums;
   text-shadow:
-    0 1px 0 rgba(255,255,255,0.12),
-    0 10px 28px color-mix(in srgb, var(--theme-accent) 16%, transparent),
-    0 18px 42px rgba(0,0,0,0.48);
-  -webkit-text-stroke: 0.3px rgba(255,255,255,0.12);
+    0 1px 0 rgba(255,255,255,0.08),
+    0 12px 28px rgba(0,0,0,0.42);
+  -webkit-text-stroke: 0.2px rgba(255,255,255,0.1);
 }
 
 .lock-time::before {
   content: attr(data-time);
   position: absolute;
   inset: 0;
-  color: color-mix(in srgb, var(--theme-accent) 24%, transparent);
-  filter: blur(11px);
-  transform: translateY(4px) scale(1.01);
+  color: rgba(255,255,255,0.055);
+  filter: blur(4px);
+  transform: translateY(2px);
   z-index: -1;
 }
 
@@ -667,7 +875,7 @@ body.glass-off .cover::after {
   content: attr(data-time);
   position: absolute;
   inset: 0;
-  color: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.045);
   clip-path: inset(0 0 62% 0);
   transform: translateY(-1px);
   pointer-events: none;
@@ -833,6 +1041,44 @@ body.glass-off .cover::after {
   font-weight: 600;
   text-align: left;
   color: rgba(255,255,255,0.58);
+}
+
+.playlist {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.playlist-item {
+  min-width: 0;
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 13px;
+  padding: 9px 10px;
+  background: rgba(255,255,255,0.045);
+  color: rgba(255,255,255,0.58);
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease, border-color 0.16s ease;
+}
+
+.playlist-item:hover,
+.playlist-item.active {
+  border-color: color-mix(in srgb, var(--theme-accent) 34%, rgba(255,255,255,0.12));
+  background: color-mix(in srgb, var(--theme-accent) 13%, rgba(255,255,255,0.045));
+  color: rgba(255,255,255,0.9);
+}
+
+.playlist-item:hover {
+  transform: translateY(-1px);
 }
 
 .controls-row {
@@ -1003,10 +1249,17 @@ input[type="range"]::-moz-range-thumb {
   .side-panel {
     left: 50%;
     top: auto;
-    bottom: 180px;
+    bottom: 225px;
     width: min(500px, calc(100vw - 24px));
     transform: translateX(-50%);
     border-radius: 22px;
+  }
+
+  .theme-lab {
+    top: 14px;
+    right: 12px;
+    left: 12px;
+    width: auto;
   }
 
   .visualizer {
@@ -1040,7 +1293,7 @@ input[type="range"]::-moz-range-thumb {
   }
 
   .side-panel {
-    bottom: 170px;
+    bottom: 215px;
   }
 
   .cover {
@@ -1066,7 +1319,7 @@ input[type="range"]::-moz-range-thumb {
       </div>
       <div class="terminal-line">
         <span class="terminal-key">track</span>
-        <span class="terminal-value">Randomly - LUCKI</span>
+        <span class="terminal-value" id="terminalTrack">Randomly - LUCKI</span>
       </div>
       <div class="terminal-line">
         <span class="terminal-key">state</span>
@@ -1114,13 +1367,9 @@ input[type="range"]::-moz-range-thumb {
         <span>restart track</span>
         <span>audio</span>
       </button>
-      <button class="command-item" type="button" data-command="theme">
-        <span>change theme</span>
-        <span id="themeCommandLabel">frost</span>
-      </button>
-      <button class="command-item" type="button" data-command="glass">
-        <span>toggle glass</span>
-        <span id="glassCommandLabel">on</span>
+      <button class="command-item" type="button" data-command="themeLab">
+        <span>theme lab</span>
+        <span>style</span>
       </button>
       <button class="command-item" type="button" data-command="copy">
         <span>copy site</span>
@@ -1159,17 +1408,63 @@ input[type="range"]::-moz-range-thumb {
 
 <div class="toast" id="toast">copied</div>
 
+<aside class="theme-lab" id="themeLab" aria-label="Theme lab">
+  <div class="theme-lab-head">
+    <div>
+      <div class="theme-lab-title">theme lab</div>
+      <div class="theme-lab-state" id="themeLabState">frost glass</div>
+    </div>
+    <button class="theme-lab-close" id="themeLabClose" type="button" aria-label="Close theme lab">x</button>
+  </div>
+
+  <div class="theme-swatches" id="themeSwatches" aria-label="Theme choices">
+    <button class="theme-swatch" type="button" data-theme="frost" aria-label="Frost theme">
+      <span class="theme-dot frost" aria-hidden="true"></span>
+      <span>frost</span>
+    </button>
+    <button class="theme-swatch" type="button" data-theme="ember" aria-label="Ember theme">
+      <span class="theme-dot ember" aria-hidden="true"></span>
+      <span>ember</span>
+    </button>
+    <button class="theme-swatch" type="button" data-theme="aqua" aria-label="Aqua theme">
+      <span class="theme-dot aqua" aria-hidden="true"></span>
+      <span>aqua</span>
+    </button>
+    <button class="theme-swatch" type="button" data-theme="violet" aria-label="Violet theme">
+      <span class="theme-dot violet" aria-hidden="true"></span>
+      <span>violet</span>
+    </button>
+    <button class="theme-swatch" type="button" data-theme="graphite" aria-label="Graphite theme">
+      <span class="theme-dot graphite" aria-hidden="true"></span>
+      <span>graphite</span>
+    </button>
+  </div>
+
+  <div class="lab-toggle-row">
+    <div class="lab-toggle-copy">
+      <span>liquid glass</span>
+      <span>blur and reflection layer</span>
+    </div>
+    <button class="glass-switch active" id="glassSwitch" type="button" aria-label="Toggle liquid glass"></button>
+  </div>
+</aside>
+
 <aside class="player" aria-label="Music player">
   <div class="track-head">
     <div class="cover" aria-hidden="true">
     </div>
     <div class="track-copy">
-      <div class="song-title">Randomly</div>
-      <div class="song-artist">LUCKI</div>
+      <div class="song-title" id="songTitle">Randomly</div>
+      <div class="song-artist" id="songArtist">LUCKI</div>
     </div>
   </div>
 
   <audio id="audio" src="Randomly.mp3" loop></audio>
+
+  <div class="playlist" aria-label="Playlist">
+    <button class="playlist-item active" type="button" data-track="0">Randomly</button>
+    <button class="playlist-item" type="button" data-track="1">Alternative Outro</button>
+  </div>
 
   <div class="controls-row">
     <button class="control-btn" id="playBtn" type="button" onclick="togglePlay()" aria-label="Play">
@@ -1214,6 +1509,7 @@ const playBtn = document.getElementById("playBtn");
 const playIcon = document.getElementById("playIcon");
 const terminal = document.getElementById("terminal");
 const bootLine = document.getElementById("bootLine");
+const terminalTrack = document.getElementById("terminalTrack");
 const terminalVolume = document.getElementById("terminalVolume");
 const terminalState = document.getElementById("terminalState");
 const terminalTheme = document.getElementById("terminalTheme");
@@ -1227,11 +1523,17 @@ const visualizerGap = 6;
 const commandWrap = document.getElementById("commandWrap");
 const commandLine = document.getElementById("commandLine");
 const commandItems = document.querySelectorAll(".command-item");
-const themeCommandLabel = document.getElementById("themeCommandLabel");
-const glassCommandLabel = document.getElementById("glassCommandLabel");
+const themeLab = document.getElementById("themeLab");
+const themeLabClose = document.getElementById("themeLabClose");
+const themeLabState = document.getElementById("themeLabState");
+const themeSwatches = document.querySelectorAll(".theme-swatch");
+const glassSwitch = document.getElementById("glassSwitch");
 const toast = document.getElementById("toast");
 const socialLinks = document.querySelectorAll(".social-link[data-copy]");
 const socials = document.querySelector(".socials");
+const songTitle = document.getElementById("songTitle");
+const songArtist = document.getElementById("songArtist");
+const playlistItems = document.querySelectorAll(".playlist-item");
 
 let isSeeking = false;
 let fadeFrame = null;
@@ -1244,8 +1546,21 @@ let idleVisualFrame = 0;
 let lastDisplayTime = "";
 let toastTimer = null;
 const themes = ["frost", "ember", "aqua", "violet", "graphite"];
+const tracks = [
+  {
+    title: "Randomly",
+    artist: "LUCKI",
+    src: "Randomly.mp3"
+  },
+  {
+    title: "Alternative Outro",
+    artist: "LUCKI",
+    src: "Alternative Outro.mp3"
+  }
+];
 let activeTheme = readSetting("axxtren-theme", "frost");
 let glassEnabled = readSetting("axxtren-glass", "on") !== "off";
+let activeTrackIndex = Math.min(Math.max(Number(readSetting("axxtren-track", "0")) || 0, 0), tracks.length - 1);
 
 function readSetting(key, fallback) {
   try {
@@ -1274,8 +1589,22 @@ function applyTheme() {
 
   const glassText = glassEnabled ? "glass" : "solid";
   terminalTheme.textContent = `${activeTheme} ${glassText}`;
-  themeCommandLabel.textContent = activeTheme;
-  glassCommandLabel.textContent = glassEnabled ? "on" : "off";
+  themeLabState.textContent = `${activeTheme} ${glassText}`;
+  glassSwitch.classList.toggle("active", glassEnabled);
+  glassSwitch.setAttribute("aria-pressed", glassEnabled ? "true" : "false");
+
+  themeSwatches.forEach((button) => {
+    button.classList.toggle("active", button.dataset.theme === activeTheme);
+  });
+}
+
+function setTheme(theme) {
+  if (!themes.includes(theme)) return;
+
+  activeTheme = theme;
+  writeSetting("axxtren-theme", activeTheme);
+  applyTheme();
+  showToast(`theme: ${activeTheme}`);
 }
 
 function cycleTheme() {
@@ -1291,6 +1620,53 @@ function toggleGlass() {
   writeSetting("axxtren-glass", glassEnabled ? "on" : "off");
   applyTheme();
   showToast(glassEnabled ? "glass on" : "glass off");
+}
+
+function setThemeLabOpen(isOpen) {
+  themeLab.classList.toggle("open", isOpen);
+}
+
+function updateTrackDisplay() {
+  const track = tracks[activeTrackIndex];
+  songTitle.textContent = track.title;
+  songArtist.textContent = track.artist;
+  terminalTrack.textContent = `${track.title} - ${track.artist}`;
+
+  playlistItems.forEach((item) => {
+    item.classList.toggle("active", Number(item.dataset.track) === activeTrackIndex);
+  });
+}
+
+function selectTrack(index, shouldPlay = !audio.paused) {
+  if (!tracks[index] || index === activeTrackIndex) return;
+
+  activeTrackIndex = index;
+  writeSetting("axxtren-track", String(activeTrackIndex));
+  updateTrackDisplay();
+
+  const switchSource = () => {
+    audio.src = tracks[activeTrackIndex].src;
+    audio.load();
+    seek.max = 0;
+    seek.value = 0;
+    time.textContent = "0:00 / 0:00";
+    lastDisplayTime = time.textContent;
+
+    if (shouldPlay) {
+      playWithFade(320);
+    }
+  };
+
+  if (audio.paused) {
+    switchSource();
+    showToast(`track: ${tracks[activeTrackIndex].title}`);
+    return;
+  }
+
+  fadeAudio(0, 170, () => {
+    switchSource();
+    showToast(`track: ${tracks[activeTrackIndex].title}`);
+  });
 }
 
 function formatTime(seconds) {
@@ -1448,7 +1824,9 @@ function pauseWithFade() {
 }
 
 applyTheme();
+audio.src = tracks[activeTrackIndex].src;
 audio.volume = targetVolume();
+updateTrackDisplay();
 updateLockTime();
 updateVolumeLabel();
 updatePlayerDisplay(0);
@@ -1480,6 +1858,21 @@ volume.addEventListener("input", () => {
   }
 
   updateVolumeLabel();
+});
+
+themeSwatches.forEach((button) => {
+  button.addEventListener("click", () => {
+    setTheme(button.dataset.theme);
+  });
+});
+
+glassSwitch.addEventListener("click", toggleGlass);
+themeLabClose.addEventListener("click", () => setThemeLabOpen(false));
+
+playlistItems.forEach((item) => {
+  item.addEventListener("click", () => {
+    selectTrack(Number(item.dataset.track));
+  });
 });
 
 function runBootSequence() {
@@ -1537,12 +1930,8 @@ commandItems.forEach((item) => {
       restart();
     }
 
-    if (command === "theme") {
-      cycleTheme();
-    }
-
-    if (command === "glass") {
-      toggleGlass();
+    if (command === "themeLab") {
+      setThemeLabOpen(true);
     }
 
     if (command === "copy") {
