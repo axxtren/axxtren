@@ -181,17 +181,28 @@ body::after {
 }
 
 .bar {
+  --bar-height: 18px;
   flex: 1;
   min-width: 5px;
-  height: 18px;
+  height: 124px;
+  position: relative;
+  opacity: 0.75;
+  transition: opacity 0.18s ease;
+  will-change: opacity;
+}
+
+.bar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--bar-height);
   border-radius: 999px;
   background:
     linear-gradient(to top, rgba(255,255,255,0.13), rgba(255,255,255,0.64)),
     rgba(255,255,255,0.12);
   box-shadow: 0 10px 26px rgba(0,0,0,0.24);
-  transform-origin: bottom;
-  transition: height 0.08s linear, opacity 0.18s ease;
-  opacity: 0.75;
 }
 
 .command-wrap {
@@ -1002,7 +1013,7 @@ input[type="range"]::-moz-range-thumb {
     </div>
   </div>
 
-  <audio id="audio" src="Randomly.mp3" autoplay loop></audio>
+  <audio id="audio" src="Randomly.mp3" loop></audio>
 
   <div class="controls-row">
     <button class="control-btn" id="playBtn" type="button" onclick="togglePlay()" aria-label="Play">
@@ -1053,6 +1064,8 @@ const lockTime = document.getElementById("lockTime");
 const lockDate = document.getElementById("lockDate");
 const visualizer = document.getElementById("visualizer");
 const visualizerBars = document.querySelectorAll(".bar");
+const visualizerBarCount = visualizerBars.length;
+const visualizerFrameMs = 1000 / 30;
 const commandWrap = document.getElementById("commandWrap");
 const commandLine = document.getElementById("commandLine");
 const commandItems = document.querySelectorAll(".command-item");
@@ -1068,6 +1081,7 @@ let analyser = null;
 let source = null;
 let visualizerData = null;
 let idleVisualFrame = 0;
+let lastVisualizerUpdate = 0;
 let toastTimer = null;
 
 function formatTime(seconds) {
@@ -1249,15 +1263,6 @@ volume.addEventListener("input", () => {
   updateVolumeLabel();
 });
 
-function tryAutoplay() {
-  if (audio.paused) {
-    playWithFade(360);
-  }
-}
-
-window.addEventListener("DOMContentLoaded", tryAutoplay);
-window.addEventListener("pointerdown", tryAutoplay, { once: true });
-
 function runBootSequence() {
   const bootSteps = [
     "loading profile...",
@@ -1346,13 +1351,25 @@ function setupVisualizer() {
   visualizerData = new Uint8Array(analyser.frequencyBinCount);
 }
 
-function animateVisualizer() {
+function setVisualizerBar(bar, height, opacity) {
+  bar.style.setProperty("--bar-height", `${height}px`);
+  bar.style.opacity = opacity;
+}
+
+function animateVisualizer(now = 0) {
+  if (now - lastVisualizerUpdate < visualizerFrameMs) {
+    requestAnimationFrame(animateVisualizer);
+    return;
+  }
+
+  lastVisualizerUpdate = now;
+
   if (analyser && visualizerData && !audio.paused) {
     analyser.getByteFrequencyData(visualizerData);
 
     visualizerBars.forEach((bar, index) => {
-      const start = Math.floor(index * visualizerData.length * 0.64 / visualizerBars.length);
-      const end = Math.max(start + 1, Math.floor((index + 1) * visualizerData.length * 0.64 / visualizerBars.length));
+      const start = Math.floor(index * visualizerData.length * 0.64 / visualizerBarCount);
+      const end = Math.max(start + 1, Math.floor((index + 1) * visualizerData.length * 0.64 / visualizerBarCount));
       let total = 0;
 
       for (let dataIndex = start; dataIndex <= end; dataIndex++) {
@@ -1362,17 +1379,15 @@ function animateVisualizer() {
       const mirroredEnergy = visualizerData[Math.max(0, visualizerData.length - index - 8)] || 0;
       const value = Math.max(total / ((end - start + 1) * 255), mirroredEnergy / 420);
       const height = 16 + value * 108;
-      bar.style.height = `${height}px`;
-      bar.style.opacity = `${0.45 + value * 0.5}`;
+      setVisualizerBar(bar, height, `${0.45 + value * 0.5}`);
     });
   } else {
-    idleVisualFrame += 0.035;
+    idleVisualFrame += 0.07;
 
     visualizerBars.forEach((bar, index) => {
       const wave = Math.sin(idleVisualFrame + index * 0.72);
       const height = 18 + (wave + 1) * 13;
-      bar.style.height = `${height}px`;
-      bar.style.opacity = "0.42";
+      setVisualizerBar(bar, height, "0.42");
     });
   }
 
